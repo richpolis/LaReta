@@ -1,0 +1,48 @@
+<ion-view view-title="Participantes">
+    <ion-content>
+        <div class="page-title">
+            Participantes
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-participant" ng-repeat="user in participants" ng-class="{'event-list-item-attending': user.self}">
+                <!-- self profile -->
+                <div class="row" ng-if="user.self == 1">
+                    <div class="full-width">
+                        <img class="profile-avatar" src="img/blank-avatar.png" ng-if="user.image == null" />
+                        <img class="profile-avatar" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
+                        <span ng-if="user.owner == 1" class="owner">CREADOR</span>
+                        <strong>{{ user.fullName }}</strong><br>
+                        <p class="details">
+                            {{ user.genderName }}<span ng-if="user.age">, {{ user.age }} años</span>
+                            <span ng-if="user.city"><br>{{ user.city }}</span>
+                            <span ng-if="user.bio"><br>"{{ user.bio }}"</span>
+                        </p>
+                    </div>
+                </div>
+
+
+                <!-- another user's profile -->
+                <div class="row" ng-if="user.self != 1" ng-click="viewUser(user.userId)">
+                    <div class="full-width">
+                        <img class="profile-avatar" src="img/blank-avatar.png" ng-if="user.image == null" />
+                        <img class="profile-avatar" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
+                        <span ng-if="user.owner == 1" class="owner">CREADOR</span>
+                        <strong>{{ user.fullName }}</strong><br>
+                        <p class="details">
+                            {{ user.genderName }}<span ng-if="user.age">, {{ user.age }} años</span>
+                            <span ng-if="user.city"><br>{{ user.city }}</span>
+                            <span ng-if="user.bio"><br>"{{ user.bio }}"</span>
+                        </p>
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </ion-content>
+</ion-view>

@@ -1,0 +1,50 @@
+<ion-view view-title="Perfil">
+    <ion-content>
+        <div class="profile-header">
+            <img class="profile-image" src="img/blank-avatar-big.png" ng-if="user.image == null" />
+            <img class="profile-image" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
+
+            <a class="profile-camera" ng-if="user.self == 1" ng-click="editProfilePicture()"><i class="fa fa-camera fa-fw"></i></a>
+
+            <div class="profile-name">
+                <strong>{{ user.fullName }}</strong>
+                <br>
+                <small>{{ user.email }}</small>
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <table>
+                <tbody>
+                <tr ng-if="user.birthDate !== undefined">
+                    <th>Edad</th>
+                    <td>{{ user.age }} años ({{ user.birthDate }})</td>
+                </tr>
+                <tr>
+                    <th>Género</th>
+                    <td>{{ user.genderName }}</td>
+                </tr>
+                <tr>
+                    <th>Deporte Favorito</th>
+                    <td>{{ user.sportName }}</td>
+                </tr>
+                <tr>
+                    <th>Ciudad</th>
+                    <td>{{ user.city }}</td>
+                </tr>
+                <tr>
+                    <th>Bio</th>
+                    <td>{{ user.bio }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <br>
+
+        <div class="actions">
+            <button ng-if="user.self == 1" class="button button-positive button-no-bar button-block-medium" type="button" ng-click="goToEditProfile()">Editar</button>
+            <!--<button class="button button-block button-positive" type="button">Cambiar Contraseña</button>-->
+        </div>
+    </ion-content>
+</ion-view>

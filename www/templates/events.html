@@ -1,0 +1,86 @@
+<ion-view view-title="Retas">
+    <ion-content>
+        <div class="datebox">
+            <div class="label">
+                <span ng-if="sport.id != 0">Retas de <strong>{{ sport.name }}</strong></span>
+                <span ng-if="sport.id == 0">Todas las retas </span>
+                para <strong class="underline">{{ dates[datePicker] | lowercase }}</strong>
+                <span class="pull-right"><i class="fa fa-chevron-down fa-fw orange"></i></span>
+            </div>
+            <div class="selector">
+                <select id="datePicker"
+                        ng-options="key as value for (key, value) in dates track by key"
+                        ng-model="datePicker" ng-change="updateDate(datePicker)">
+                    <option value="" ng-if="false"></option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-list-item" ng-repeat="event in events" ng-class="{'event-list-item-attending': event.attending == 1}">
+                <div class="row" ng-click="goToEvent(event.id)">
+                    <div class="col-75">
+                        <div class="location">
+                            <i ng-if="event.full == 1 && event.attending != 1" class="fa fa-lock fa-fw" ></i>
+                            <i ng-if="event.attending == 1" class="fa fa-calendar-check-o fa-fw" ></i>
+                            <span ng-if="sport.id == 0">{{ event.sportName }}:</span>
+                            {{ event.location }}
+                        </div>
+                        <div class="details">
+                            <i class="fa fa-users"></i> {{ event.participants }} |
+                            <i class="fa fa-star"></i> {{ event.skillName }}
+                            <span ng-if="event.distance != null"> | <i class="fa fa-map-marker"></i> {{ event.distance }} km</span>
+                        </div>
+                    </div>
+                    <div class="time col vcenter">
+                        <!--{{ event.timestamp | date: 'd MMM' }}<br>-->
+                        {{ event.timestamp | compactDate }}<br>
+                        {{ event.time }}
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="event-footer-spacer" ng-if="events.length >  0"></div>
+
+        <div class="padding center">
+            <p class="muted" ng-if="events.length ==  0 && sport.id != 0">No se encontraron retas para {{ sport.name }}.</p>
+            <p class="muted" ng-if="events.length ==  0 && sport.id == 0">No se encontraron retas.</p>
+            <p class="muted" ng-if="events.length > 0">¿No encontraste la reta que buscabas?</p>
+            <button class="button button-block button-primary-skew" ng-click="goToCreateEvent(sport.id)">Arma tu Reta!</button>
+
+        </div>
+
+    </ion-content>
+</ion-view>
+
+<script id="location-modal.html" type="text/ng-template">
+    <ion-modal-view>
+        <ion-header-bar>
+            <h1 class="title">Fijar ubicación!</h1>
+        </ion-header-bar>
+        <ion-content>
+            <div class="bar bar-header item-input-inset">
+                <label class="item-input-wrapper">
+                    <i class="icon ion-ios-search placeholder-icon"></i>
+                    <input type="text" placeholder="Dirección" ng-model="event.direction" g-places-autocomplete>
+                </label>
+                <button class="button button-clear" type="button" ng-click="event.direction = null">
+                    X
+                </button>
+            </div>
+
+            <div id="new-event-map">
+                <ui-gmap-google-map center='map.center' zoom='map.zoom' options='map.options'>
+                    <ui-gmap-marker coords="marker.coords" idkey="marker.id"></ui-gmap-marker>
+                </ui-gmap-google-map>
+            </div>
+        </ion-content>
+    </ion-modal-view>
+</script>

@@ -1,0 +1,459 @@
+/** Ionic default style override */
+/** GENERAL **/
+body, h1, h2, h3, h4, h5, p, input, button, select, textarea {
+  font-family: "Futura", "FuturaStd", Arial, sans-serif !important;
+  color: #333333; }
+
+.button-positive {
+  border-color: #105cd1 !important;
+  background-color: #1E73EB !important; }
+
+.button-green {
+  background-color: #1FD393 !important;
+  border-color: #1FD393 !important;
+  color: white; }
+
+.pane, .scroll-content {
+  background-color: #F0F0F0; }
+
+.vcenter {
+  display: flex;
+  align-items: center; }
+
+.center {
+  text-align: center; }
+
+.underline {
+  text-decoration: underline; }
+
+.no-padding {
+  padding: 0; }
+
+.show-list-numbers {
+  padding-left: 20px !important;
+  list-style-type: decimal !important; }
+
+/** UTILITIES **/
+.hero-header {
+  margin: 15px;
+  padding: 15px;
+  font-size: 16px;
+  background-color: #FFFFFF;
+  color: #1E73EB;
+  box-shadow: 0 0 10px lightgray; }
+
+.canceled-header {
+  margin: 15px;
+  padding: 15px;
+  font-size: 12px;
+  background-color: #ED4A36;
+  color: white; }
+
+/** TITLEBAR **/
+.bar-header {
+  background-color: #D9D9E2 !important;
+  color: #696969 !important; }
+
+.bar-header .title {
+  display: none; }
+
+.logo-text {
+  height: 20px;
+  margin: 7px 5px 0 0; }
+
+.bar-stable, .bar-stable .button {
+  color: #696969 !important; }
+
+/** SIDEBAR **/
+.menu .scroll-content, .menu .item, .menu .item-content {
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #3A393F;
+  background-color: #3A393F;
+  color: #F0F0F0;
+  font-size: 14px; }
+
+.menu .item {
+  height: 60px; }
+
+.menu .item-icon {
+  position: relative;
+  float: left;
+  background-color: #616066;
+  color: white;
+  left: 0;
+  top: 0;
+  padding: 0;
+  margin: 0;
+  height: 60px;
+  width: 60px;
+  text-align: center;
+  padding-top: 16px; }
+
+.menu .item-label {
+  display: inline-block;
+  padding: 20px 0 0 20px; }
+
+.sidebar-list .item:active, .sidebar-list .item:visited,
+.sidebar-list .item-content:active, .sidebar-list .item-content:visited,
+.sidebar-list .item-complex:active, .sidebar-list .item-complex:visited,
+.sidebar-list .item .activated, .sidebar-list .item-content .activated, .sidebar-list .item-complex .activated {
+  background-color: #3A393F !important; }
+
+/** LOGIN VIEW **/
+#login {
+  background-color: #E9E9EB;
+  padding-top: 20px;
+  text-align: center; }
+
+#login img {
+  width: 50%;
+  padding-bottom: 30px; }
+
+#login button {
+  margin: 0 !important; }
+
+#login .pills {
+  padding: 0; }
+
+#login .pills .option-selected {
+  padding: 10px;
+  font-size: 16px;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  background-color: white;
+  color: #1E73EB; }
+
+#login .pills .option {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #E9E9EB;
+  border-bottom: 1px solid #ddd; }
+
+#login .item {
+  border: none !important; }
+
+/** SIGNUP VIEW **/
+#signup button {
+  margin: 0 !important; }
+
+.signup-facebook {
+  padding-top: 10px;
+  margin: 0; }
+  .signup-facebook small {
+    color: #333333; }
+
+/** HOME VIEW **/
+.home {
+  background-color: #E9E9EB;
+  padding-top: 40px;
+  text-align: center; }
+
+.home img {
+  width: 50%;
+  padding-bottom: 50px; }
+
+.home .menu-helper {
+  position: absolute;
+  top: -30px;
+  left: 15px; }
+
+/** SPORT LIST **/
+.search-header {
+  padding: 5px 15px; }
+
+.search-header * {
+  display: inline !important; }
+
+.search-header input {
+  width: 90%;
+  color: #1E73EB;
+  padding-left: 5px; }
+
+.sport-list {
+  text-align: center; }
+
+.sport-list-category {
+  font-size: 16px;
+  margin: 0 15px;
+  padding: 15px 0 5px 0;
+  border-bottom: 1px solid #333333; }
+
+.sport-list-item {
+  display: inline-block;
+  margin: 15px 10px; }
+
+.sport-list-item img {
+  width: 115px;
+  height: 115px; }
+
+.sport-list-item a {
+  text-decoration: none; }
+
+.banner-all-sports {
+  padding: 0 15px;
+  margin-bottom: 15px; }
+  .banner-all-sports .icon {
+    display: inline-block;
+    width: 115px;
+    padding-right: 10px; }
+  .banner-all-sports .label {
+    width: calc(100% - 125px);
+    display: inline-block;
+    margin: 0 0 0 10px;
+    font-size: 16px; }
+  .banner-all-sports img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 115px;
+    width: 115px; }
+
+/** EVENT LIST **/
+.event-list {
+  color: white;
+  padding: 0 15px 0 15px; }
+
+.event-list-item {
+  padding: 10px 5px;
+  font-size: 16px; }
+
+.event-list-item .location {
+  font-size: 20px; }
+
+.event-list-item .details {
+  font-size: 12px; }
+
+.event-list-item:nth-child(even) {
+  background-color: #6A5595; }
+
+.event-list-item:nth-child(odd) {
+  background-color: #5D4A85; }
+
+.event-list-item-attending:nth-child(even) {
+  background-color: #2DE6A7; }
+
+.event-list-item-attending:nth-child(odd) {
+  background-color: #01D392; }
+
+.event-footer-spacer {
+  display: block;
+  margin: 40px 15px 0 15px;
+  height: 1px;
+  background-color: #CCCCCC; }
+
+.event-footer {
+  text-align: center;
+  padding: 30px 15px 15px 15px; }
+
+.no-events {
+  padding: 15px;
+  text-align: center; }
+
+.datebox {
+  position: relative;
+  padding: 10px;
+  margin: 15px;
+  border: 0;
+  height: 50px;
+  box-shadow: 0 0 10px lightgray; }
+
+.datebox .label, .datebox .selector {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0; }
+
+.datebox .label {
+  padding: 10px;
+  font-size: 16px;
+  line-height: 30px;
+  color: #1E73EB;
+  overflow: hidden; }
+
+.datebox .selector {
+  opacity: 0;
+  padding: 0;
+  width: 100%;
+  z-index: 10; }
+
+.datebox .selector select {
+  width: 100%;
+  font-size: 30px;
+  border: none; }
+
+/** EVENT VIEW **/
+.event-header {
+  padding: 5px;
+  /* hotfix for Ionic's 'row&col' elements */ }
+
+#event-map {
+  width: 100%;
+  height: 250px; }
+
+.angular-google-map-container {
+  height: 250px; }
+
+#new-event-map {
+  width: 100%;
+  height: 300px; }
+
+#new-event-map:before {
+  width: 22px;
+  height: 40px;
+  display: block;
+  content: ' ';
+  position: relative;
+  top: 50%;
+  left: 50%;
+  margin: -40px 0 0 -11px;
+  background: url("../img/marker.png");
+  background-size: 22px 40px;
+  /* Since I used the HiDPI marker version this compensates for the 2x size */
+  z-index: 1; }
+
+div.pac-container {
+  pointer-events: auto;
+  position: absolute;
+  z-index: 10000; }
+
+.event-name {
+  font-size: 20px; }
+
+.event-description {
+  margin: 15px;
+  text-align: justify; }
+
+.event-details {
+  margin: 15px;
+  padding: 15px;
+  color: #1E73EB;
+  background-color: white; }
+
+.event-details table {
+  border-collapse: collapse; }
+
+.event-details table th {
+  text-align: left;
+  font-weight: bold;
+  padding-right: 20px; }
+
+.event-actions {
+  padding: 0 15px 15px 15px; }
+
+/** NEW EVENT **/
+.new-event-header {
+  padding: 0; }
+
+.new-event-header .input-label {
+  color: #1E73EB; }
+
+/** VIEW EVENT PARTICIPANTS **/
+.event-list-item .profile-avatar {
+  height: 80px;
+  width: 80px;
+  float: left;
+  margin-left: 5px;
+  margin-right: 10px; }
+
+.event-list-item .owner {
+  font-size: 12px;
+  display: block; }
+
+/** EVENT MESSAGE BOARD **/
+.message-list {
+  padding: 0 15px;
+  margin: 15px;
+  background-color: white; }
+
+.message-list-item {
+  min-height: 90px;
+  padding: 15px 0;
+  border-bottom: 1px solid #DDD; }
+
+.message-list-item:last-child {
+  border: none !important; }
+
+.message-list-item .avatar {
+  float: left;
+  margin-right: 10px; }
+
+.message-list-item .avatar img {
+  height: 60px;
+  width: 60px; }
+
+.message-list-item .author {
+  display: inline-block;
+  font-weight: bold; }
+
+.message-list-item .author-self {
+  color: #1E73EB; }
+
+.message-list-item .timestamp {
+  display: inline-block;
+  font-size: 12px;
+  color: #888; }
+
+.message-list-item .delete {
+  display: block;
+  float: right;
+  color: #888; }
+
+.textarea-block {
+  width: 100%;
+  padding-bottom: 15px; }
+
+/** PROFILE **/
+.profile-header {
+  padding: 5px;
+  /* hotfix for Ionic's 'row&col' elements */ }
+
+.profile-header strong {
+  font-size: 20px; }
+
+.profile-header img {
+  width: 100%;
+  /*box-shadow: 0 0 10px #ccc;*/
+  border: 3px solid #F0F0F0; }
+
+.edit-image {
+  position: relative; }
+
+.edit-image a {
+  position: absolute;
+  bottom: 10px;
+  left: 5px;
+  text-align: center;
+  width: calc(100% - 10px);
+  margin: 0;
+  font-size: 12px;
+  color: white;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.4); }
+
+.muted {
+  font-size: 12px;
+  color: #696969; }
+
+.muted a {
+  color: #696969; }
+
+.primary {
+  color: #1E73EB; }
+
+.padding {
+  padding: 15px !important; }
+
+.privacy-text p {
+  font-size: 12px;
+  text-align: justify;
+  padding-bottom: 10px; }
+
+.privacy-text a {
+  color: #666; }
+
+.padding-ios {
+  height: 20px; }
+
+/*# sourceMappingURL=style.css.map */

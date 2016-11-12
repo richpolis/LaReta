@@ -1,0 +1,56 @@
+<ion-view view-title="Editar Perfil">
+    <ion-content>
+        <form ng-submit="saveProfile()">
+            <div class="box">
+                <div class="list">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Email</span>
+                        <input class="muted" type="text" ng-model="user.email" disabled>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Nombre</span>
+                        <input type="text" placeholder="Nombre" ng-model="user.fullName">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Fecha de nacimiento</span>
+                        <input type="date" placeholder="Fecha" ng-model="user.date">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Ciudad</span>
+                        <input type="text" placeholder="Ciudad" ng-model="user.city">
+                    </label>
+                    <label class="item item-input item-select">
+                        <span class="input-label">Género</span>
+                        <select
+                                ng-model="user.gender"
+                                ng-options="gender.id as gender.label for gender in genderOptions"
+                                convert-to-number>
+                            <option value="0">-- Selecciona una opción --</option>
+                        </select>
+                    </label>
+                    <label class="item item-input item-select">
+                        <div class="input-label">
+                            Deporte Favorito
+                        </div>
+                        <select
+                                ng-model="user.sport"
+                                convert-to-number
+                                ng-options="sport.id as sport.name for sport in sportOptions"
+                                ng-required="true">
+                            <option selected disabled>Selecciona deporte</option>
+                        </select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Bio</span>
+                        <textarea placeholder="Bio" ng-model="user.bio"></textarea>
+                    </label>
+                </div>
+            </div>
+
+
+            <div class="actions">
+                <button class="button button-block button-positive-skew" type="submit">Guardar Cambios</button>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

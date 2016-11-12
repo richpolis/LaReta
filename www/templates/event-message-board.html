@@ -1,0 +1,32 @@
+<ion-view view-title="Mensajes">
+    <ion-content>
+        <div class="page-title">
+            Mensajes
+        </div>
+
+        <div class="message-list">
+
+            <div class="message-list-item" ng-repeat="message in messages">
+                <div ng-if="message.self" class="delete" ng-click="deleteMessage(message.messageId)"><i class="fa fa-times fa-fw"></i></div>
+                <div ng-if="message.self" class="author author-self">{{ message.fullName }}:</div>
+                <div ng-if="!message.self" class="author" ng-click="viewUser(message.userId)">{{ message.fullName }}:</div>
+                <div class="message">{{ message.message }}</div>
+                <div class="timestamp">{{ message.timestamp }}</div>
+            </div>
+
+        </div>
+
+        <div ng-if="messages.length == 0" class="event-no-messages">No hay mensajes todavía.</div>
+
+        <div class="event-details">
+            <form name="messageForm" novalidate ng-submit="messageForm.$valid && newMessage(eventId)">
+                <textarea id="textarea-comment" rows="1" placeholder="Escribe tu mensaje&hellip;" class="message-textarea"
+                          ng-keyup="expandText()" ng-keydown="expandText()" ng-model="message.comment"
+                          ng-required="true"></textarea>
+                <button class="button button-block button-positive button-small message-button"
+                        type="submit" ng-disabled="messageForm.$invalid">Enviar</button>
+            </form>
+        </div>
+
+    </ion-content>
+</ion-view>

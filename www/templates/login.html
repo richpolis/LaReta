@@ -1,0 +1,31 @@
+<ion-view hide-nav-bar="true">
+    <ion-content id="login">
+        <div ng-if="isIOS" class="padding-ios"></div>
+        <img class="drop-shadow home-logo" src="img/logo.svg">
+
+        <div class="row pills">
+            <div class="col-50 option-selected">Iniciar Sesión</div>
+            <div class="col-50 option" ng-click="goToSignUp()">Registrarse</div>
+        </div>
+        <form name="loginForm" ng-submit="loginForm.$valid && doLogin()" novalidate>
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">Correo</span>
+                    <input type="email" ng-model="loginData.email" placeholder="usuario@dominio.com" required >
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Contraseña</span>
+                    <input type="password" ng-model="loginData.password" required >
+                </label>
+                <label class="item">
+                    <button class="button button-block button-navy-blue login-button" ng-disabled="loginForm.$invalid" type="submit">Iniciar Sesión</button>
+                </label>
+                <label class="item">
+                    <button class="button button-block button-navy-blue login-button" type="button" ng-click="facebookLogin()">
+                        <i class="fa fa-facebook-square"></i> &nbsp;&nbsp;<span> Iniciar Sesión con Facebook</span>
+                    </button>
+                </label>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

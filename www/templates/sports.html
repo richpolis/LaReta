@@ -1,0 +1,33 @@
+<ion-view view-title="Deportes">
+    <ion-content>
+        <div class="search-header">
+            <i class="fa fa-search fa-fw"></i>
+            <input type="text" placeholder="Buscar deporte.." ng-model="sportsFilter" ng-keyup="filterSports(sportsFilter)">
+        </div>
+
+        <div ng-if="!searching" class="sport-separator">
+            Todos los deportes
+        </div>
+        <div ng-if="!searching" class="sport-list">
+            <div class="sport-item" ng-click="viewAll()"><img src="img/sports/all.svg"></div>
+        </div>
+
+        <div ng-if="searching && categories.searchResults.length == 0" class="padding center">
+            Woops! Parece que todavía no tenemos ese deporte.
+        </div>
+
+        <div class="sport-list">
+
+            <div ng-repeat="(category, sports) in categories">
+                <div ng-if="!searching" class="sport-separator">
+                    {{ category }}
+                </div>
+
+                <!-- this is "spaceless" to make the 50% width work -->
+                <div class="sport-item" ng-repeat="sport in sports"><a href="#/app/events/{{ sport.id }}"><img src="img/sports/{{ sport.image }}">{{ sport.name }}</a></div>
+            </div>
+
+        </div>
+
+    </ion-content>
+</ion-view>

@@ -1,0 +1,91 @@
+<!-- View single event -->
+<ion-view view-title="Ver Reta">
+    <ion-content>
+        <div ng-if="event.canceled" class="canceled-header">
+            <i class="fa fa-exclamation-circle fa-fw"></i> Esta reta ha sido cancelada por su creador
+        </div>
+
+        <div class="titlebox">
+            <div class="event-name inline truncate vcenter">
+                <strong>{{ event.sportName }}:</strong> {{ event.location }}
+            </div>
+            <div class="pull-right event-status vcenter">
+                <button ng-if="event.attending == 0 && event.full == 0 && event.canceled == 0" ng-click="joinEvent(event.id)" class="button button-small button-positive button-no-bar"><i class="fa fa-user-plus fa-fw"></i></button>
+                <i ng-if="event.attending == 1" class="fa fa-calendar-check-o fa-fw"></i>
+                <i ng-if="event.full == 1 && event.attending != 1" class="fa fa-lock fa-fw" ></i>
+            </div>
+        </div>
+
+        <div id="event-map">
+            <ui-gmap-google-map center='map.center' zoom='map.zoom' options='map.options'>
+                <ui-gmap-marker coords="marker.coords" idkey="marker.id"></ui-gmap-marker>
+            </ui-gmap-google-map>
+        </div>
+
+
+
+        <div class="event-description" ng-if="event.description">
+            <div class="icon"><i class="fa fa-commenting-o fa-fw"></i></div>
+            {{ event.description }}
+        </div>
+
+        <div class="event-details">
+            <table>
+                <tbody>
+                <tr>
+                    <th>Deporte</th>
+                    <td>{{ event.sportName }}</td>
+                </tr>
+                <tr>
+                    <th>Lugar</th>
+                    <td>{{ event.location }}</td>
+                </tr>
+                <tr>
+                    <th>Dirección</th>
+                    <td>{{ event.address }}</td>
+                </tr>
+                <tr>
+                    <th>Fecha</th>
+                    <td>{{ event.date }}</td>
+                </tr>
+                <tr>
+                    <th>Hora</th>
+                    <td>{{ event.time }}</td>
+                </tr>
+                <tr>
+                    <th>Habilidad</th>
+                    <td>{{ event.skillName }}</td>
+                </tr>
+                <tr>
+                    <th>Género</th>
+                    <td>{{ event.genderName }}</td>
+                </tr>
+                <tr ng-if="event.minAge > 0 || event.maxAge > 0">
+                    <th>Edades</th>
+                    <td ng-if="event.minAge > 0 && event.maxAge == 0">Más de {{ event.minAge }} años</td>
+                    <td ng-if="event.minAge == 0 && event.maxAge > 0">Menos de {{ event.maxAge }} años</td>
+                    <td ng-if="event.minAge > 0 && event.maxAge > 0">De {{ event.minAge }} a {{ event.maxAge }} años</td>
+                </tr>
+                <tr>
+                    <th>Participantes</th>
+                    <td>{{ event.attendees }} de {{ event.participants }}<!--(Cupo máximo {{ event.maxParticipants }})--></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div ng-if="event.attending == 1" class="actions">
+            <button ng-if="event.canceled == 0" class="button button-block button-gray button-block-medium" ng-click="openInMaps(event)">Abrir en Mapas</button>
+            <button ng-if="event.canceled == 0" class="button button-block button-gray button-block-medium" type="button" ng-click="shareEvent(event.code)">Compartir</button>
+            <button class="button button-block button-gray button-block-medium" type="button" ng-click="participants(event.id)">Participantes</button>
+            <button class="button button-block button-gray button-block-medium" type="button" ng-click="messageBoard(event.id)">Chat</button>
+            <br ng-if="event.canceled == 0">
+            <button ng-if="event.canceled == 0" class="button button-block button-red button-block-medium" type="button" ng-click="confirmCancelEvent(event.id)">Cancelar Participación</button>
+            <button ng-if="event.owner == 1 && event.canceled == 0" class="button button-block button-red button-block-medium" type="button" ng-click="confirmDeleteEvent(event.id)">Cancelar Reta</button>
+        </div>
+
+        <div ng-if="event.attending == 0 && event.full == 0 && event.canceled == 0" class="actions">
+            <button class="button button-block button-positive" type="button" ng-click="joinEvent(event.id)"><i class="fa fa-user-plus fa-fw"></i> Unirse</button>
+        </div>
+    </ion-content>
+</ion-view>

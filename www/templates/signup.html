@@ -1,0 +1,82 @@
+<ion-view view-title="Registro" hide-nav-bar="true">
+    <ion-content id="signup">
+        <div ng-if="isIOS" class="padding-ios"></div>
+        <form name="signupForm">
+
+            <div class="padding">
+                <!--<button ng-if="!facebookConnected" class="button button-block button-positive button-facebook" type="button" ng-click="facebookSignup()">
+                    <i class="fa fa-facebook-square"></i> &nbsp;&nbsp;<span> Registrarse con Facebook</span>
+                </button>-->
+                <p ng-if="facebookConnected" class="primary text-center signup-facebook">
+                    <i class="fa fa-facebook-square fa-fw"></i> Conectado con Facebook &nbsp;&nbsp;<i class="fa fa-check fa-fw balanced"></i><br>
+                    <small>Favor de llenar los campos restantes</small>
+                </p>
+            </div>
+
+            <div class="box">
+                <div class="list">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Correo Electrónico</span>
+                        <input type="email" placeholder="E-Mail" ng-model="user.email"
+                                ng-required="true">
+                    </label>
+                    <label class="item item-input item-stacked-label" ng-if="!facebookHasEmail">
+                        <span class="input-label">Contraseña</span>
+                        <input type="password" placeholder="Contraseña" ng-model="user.password"
+                                ng-required="true" ng-minlength="3">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Nombre</span>
+                        <input type="text" placeholder="Nombre Completo" ng-model="user.fullName"
+                                ng-required="true" ng-minlength="3">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Fecha de Nacimiento</span>
+                        <input type="date" placeholder="Fecha" ng-model="user.date">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Ciudad</span>
+                        <input type="text" placeholder="Ciudad" ng-model="user.city">
+                    </label>
+                    <label class="item item-input item-select">
+                        <span class="input-label">Sexo</span>
+                        <select
+                                ng-model="user.gender"
+                                ng-options="gender.id as gender.label for gender in genderOptions"
+                                convert-to-number
+                                ng-required="true">
+                            <option value="" ng-if="false"></option>
+                        </select>
+                    </label>
+                    <label class="item item-input item-select">
+                        <div class="input-label">
+                            Deporte <br> Favorito
+                        </div>
+                        <select
+                                ng-model="user.sport"
+                                convert-to-number
+                                ng-options="sport.id as sport.name for sport in sportOptions" >
+                            <option value="" ng-if="false"></option>
+                        </select>
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Bio</span>
+                        <textarea rows="3" ng-model="user.bio" placeholder="Cuéntanos sobre ti, tu equipo preferido, etc.."></textarea>
+                    </label>
+                </div>
+            </div>
+
+            <div class="padding center">
+                <p class="muted"><input type="checkbox" ng-model="user.terms" ng-required="true"> He leído y acepto el <a href="" ng-click="openPrivacyModal()">Aviso de Privacidad</a></p>
+            </div>
+
+            <div class="actions">
+                <button class="button button-block button-positive-skew" type="button" ng-disabled="signupForm.$invalid" ng-click="signupForm.$valid && doSignup()">Guardar Registro</button>
+            </div>
+
+            <div class="padding center">
+                <p><br><a class="muted" href="" ng-click="cancelSignUp()">Regresar</a></p>
+            </div>
+        </form>
+    </ion-content>
+</ion-view>

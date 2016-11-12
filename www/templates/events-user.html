@@ -1,0 +1,89 @@
+<ion-view view-title="Retas">
+    <ion-content>
+        <div class="user-event-header">
+            Retas Próximas
+        </div>
+
+        <div ng-if="upcoming.length == 0" class="user-no-events">
+        <p>No tienes retas próximas.</p>
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-list-item event-list-item-attending" ng-repeat="event in upcoming">
+                <div class="row" ng-click="goToEvent(event.id)">
+                    <div class="col-75">
+                        <span class="location">
+                            <i ng-if="event.canceled == 1" class="fa fa-times fa-fw" ></i>
+                            <strong>{{ event.sportName }}:</strong> {{ event.location }}
+                        </span>
+                        <br>
+                        <span class="details">
+                            <i class="fa fa-users"></i> {{ event.participants }} |
+                            <i class="fa fa-star"></i> {{ event.skillName }}
+                            <span ng-if="event.distance != null"> | <i class="fa fa-map-marker"></i> {{ event.distance }} km</span>
+                        </span>
+                    </div>
+                    <div class="time col vcenter">
+                        <small>
+                            {{ event['date-month']|capitalize }} {{ event['date-day'] }}<br>
+                            {{ event['date-year'] }}<br>
+                            {{ event.time }}
+                        </small>
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="user-event-header">
+            Retas Pasadas
+        </div>
+
+        <div ng-if="past.length == 0" class="user-no-events">
+            <p>No se encontraron retas en tu historial.</p>
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-list-item event-list-item-attending" ng-repeat="event in past">
+                <div class="row" ng-click="goToEvent(event.id)">
+                    <div class="col-75">
+                        <span class="location">
+                            <i ng-if="event.canceled == 1" class="fa fa-times fa-fw" ></i>
+                            <strong>{{ event.sportName }}:</strong> {{ event.location }}
+                        </span>
+                        <br>
+                        <span class="details">
+                            <i class="fa fa-users"></i> {{ event.participants }} |
+                            <i class="fa fa-star"></i> {{ event.skillName }}
+                            <span ng-if="event.distance != null"> | <i class="fa fa-map-marker"></i> {{ event.distance }} km</span>
+                        </span>
+                    </div>
+                    <div class="time col vcenter">
+                        <small>
+                            {{ event['date-month']|capitalize }} {{ event['date-day'] }}<br>
+                            {{ event['date-year'] }}<br>
+                            {{ event.time }}
+                        </small>
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="event-footer" ng-if="events.length == 0">
+            <p>¿No has encontrado la reta que buscabas?</p>
+            <button class="button button-block button-positive button-green" ng-click="goToCreateEvent()">Arma tu Reta!</button>
+        </div>
+
+        <br>
+
+    </ion-content>
+</ion-view>
