@@ -1,6 +1,6 @@
 <ion-view view-title="Nueva Reta">
     <ion-content>
-        <form name="eventForm">
+        <form id="eventForm" name="eventForm">
             <div class="box">
                 <div class="list">
                     <label class="item item-input item-select">
@@ -17,7 +17,7 @@
                     </label>
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Lugar</span>
-                        <input type="text" placeholder="Nombre de la cancha, establecimiento, estadio.." ng-model="event.location">
+                        <input type="text" placeholder="Nombre de la cancha, establecimiento, estadio.." ng-model="event.location" ng-required="true">
                     </label>
                     <div class="item" ng-click="openModal()">
                         <span>Dirección</span>
@@ -31,7 +31,8 @@
                     </label>-->
                     <label class="item item-input">
                         <span class="input-label">Fecha</span>
-                        <input type="date" placeholder="Fecha" ng-model="event.date" min="{{ minDate }}" ng-required="true">
+                        <input type="text" ng-if="!isIOS" placeholder="Fecha" ng-model="event.dateString" min="{{ minDate }}" ng-required="true" ng-click="showDatePicker()">
+                        <input type="date" ng-if="isIOS" placeholder="Fecha" ng-model="event.date" min="{{ minDate }}" ng-required="true">
                     </label>
                     <!--
                     <label class="item item-input item-stacked-label">
@@ -40,7 +41,8 @@
                     </label>-->
                     <label class="item item-input">
                         <span class="input-label">Hora</span>
-                        <input type="time" placeholder="Hora" ng-model="event.time" ng-required="true">
+                        <input type="text" ng-if="!isIOS" placeholder="Hora" ng-model="event.timeString" ng-required="true"  ng-click="showTimePicker()">
+                        <input type="time" ng-if="isIOS" placeholder="Hora" ng-model="event.time" ng-required="true">
                     </label>
                     <label class="item item-input item-select">
                         <div class="input-label">

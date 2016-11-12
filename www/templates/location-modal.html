@@ -27,7 +27,12 @@
         </div>
 
         <div class="padding">
-            <button class="button button-block button-positive button-no-bar" type="button" ng-click="closeModal()" ng-disabled="!event.address">Fijar Ubicación</button>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive button-no-bar" type="button" ng-click="closeModal()" ng-disabled="!event.address">Fijar Ubicación</button></div>
+            </div>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive button-no-bar" type="button" ng-click="centerOnMe()">Mi ubicacion</button></div>
+            </div>
         </div>
 
         <div class="padding center">

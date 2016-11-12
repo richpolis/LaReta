@@ -1,10 +1,11 @@
 <ion-view view-title="Perfil">
     <ion-content>
         <div class="profile-header">
-            <img class="profile-image" src="img/blank-avatar-big.png" ng-if="user.image == null" />
-            <img class="profile-image" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
 
-            <a class="profile-camera" ng-if="user.self == 1" ng-click="editProfilePicture()"><i class="fa fa-camera fa-fw"></i></a>
+            <img class="profile-image" src="img/blank-avatar-big.png" ng-if="user.image == null && facebookConnected == false" />
+            <img class="profile-image" src="{{ user.image }}" ng-if="user.image != null" />
+            
+            <a class="profile-camera" ng-if="user.self == 1 && facebookConnected == false" ng-click="editProfilePicture()"><i class="fa fa-camera fa-fw"></i></a>
 
             <div class="profile-name">
                 <strong>{{ user.fullName }}</strong>
@@ -44,7 +45,7 @@
 
         <div class="actions">
             <button ng-if="user.self == 1" class="button button-positive button-no-bar button-block-medium" type="button" ng-click="goToEditProfile()">Editar</button>
-            <!--<button class="button button-block button-positive" type="button">Cambiar Contraseña</button>-->
+            <button ng-if="facebookConnected == false" class="button button-block button-positive"  ng-click="goToChangePassword()">Cambiar Contraseña</button>
         </div>
     </ion-content>
 </ion-view>

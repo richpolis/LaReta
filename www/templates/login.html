@@ -11,11 +11,11 @@
             <div class="list">
                 <label class="item item-input">
                     <span class="input-label">Correo</span>
-                    <input type="email" ng-model="loginData.email" placeholder="usuario@dominio.com" required >
+                    <input type="email" id="login-email" name="email" ng-model="loginData.email" placeholder="usuario@dominio.com" required >
                 </label>
                 <label class="item item-input">
                     <span class="input-label">Contraseña</span>
-                    <input type="password" ng-model="loginData.password" required >
+                    <input type="password" name="password" ng-model="loginData.password" required >
                 </label>
                 <label class="item">
                     <button class="button button-block button-navy-blue login-button" ng-disabled="loginForm.$invalid" type="submit">Iniciar Sesión</button>
@@ -27,5 +27,8 @@
                 </label>
             </div>
         </form>
+        <label class="item">
+            <button class="button button-block button-navy-blue login-button" ng-click="recuperarContrasena()" ng-disabled="!loginForm.email.$valid">Recuperar contraseña</button>
+         </label>
     </ion-content>
 </ion-view>

@@ -13,7 +13,8 @@
                     </label>
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Fecha de nacimiento</span>
-                        <input type="date" placeholder="Fecha" ng-model="user.date">
+                        <input type="text" ng-if="!isIOS" placeholder="Fecha"  ng-model="user.dateString" ng-click="showDatePicker()">
+                        <input type="date" ng-if="isIOS" placeholder="Fecha" ng-model="user.date">
                     </label>
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Ciudad</span>

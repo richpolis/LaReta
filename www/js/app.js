@@ -10,16 +10,12 @@ angular.module('laReta', [
     'ngIOS9UIWebViewPatch'
 ])
     
-    .run(function($http, $ionicPlatform, authService, $rootScope, $ionicPopup, $state, $ionicHistory, $ionicLoading,
-                  jsonUtility, $cordovaNetwork, $ionicModal, $cordovaGeolocation, $cordovaPush) {
+    .run(function($http, $ionicPlatform, authService, $rootScope, $state, $ionicHistory, 
+                  jsonUtility, $cordovaNetwork, $ionicModal, $cordovaGeolocation, 
+                  $cordovaPushV5, $localstorage, $ionicLoading, $ionicPopup, 
+                  $cordovaToast, $location) {
 
 
-        // Check for auth
-        if ( typeof authService.getUser() === "undefined" || jsonUtility.isObjectEmpty(authService.getUser()) ) {
-            $state.go('app.login');
-        }
-
-        // Show Loader
         $rootScope.showLoader = function(enabled) {
             if(enabled) {
                 $ionicLoading.show({
@@ -49,16 +45,17 @@ angular.module('laReta', [
                 template: text
             });
         };
-
+        
         // Force Logout
         $rootScope.forceLogout = function () {
             authService.setUser({});
+            $localstorage.set('userFacebook',{},true);
             $state.go('app.login');
             $ionicHistory.nextViewOptions({disableBack: 'true'});
             $ionicHistory.clearHistory();
             $ionicHistory.clearCache();
         };
-
+        
         // Privacy Modal Definition
         $ionicModal.fromTemplateUrl('templates/privacy-modal.html', {
             scope: $rootScope,
@@ -73,27 +70,7 @@ angular.module('laReta', [
             $rootScope.privacyModal.hide();
         };
 
-        // Cordova Network - Listeners
-        document.addEventListener("deviceready", function () {
-            $rootScope.networkType = $cordovaNetwork.getNetwork();
-            $rootScope.isOnline = $cordovaNetwork.isOnline();
 
-            if(!$rootScope.isOnline) {
-                $state.go('app.no-internet');
-            }
-
-            // listen for Online event
-            $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
-                $rootScope.isOnline = true;
-            });
-
-            // listen for Offline event
-            $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
-                $rootScope.isOnline = false;
-                $state.go('app.no-internet')
-            });
-        }, false);
-        // End Cordova Network - Listeners
 
         // API Preset Error Definition
         $rootScope.getErrorDescription = function (code) {
@@ -541,22 +518,49 @@ angular.module('laReta', [
         ];
 
         $ionicPlatform.ready(function() {
-            // Start GeoLocation
-            // Initialize variables (Monterrey)
-            // Default position if no GPS data was found
-            $rootScope.lat = 25.67702;
-            $rootScope.lng = -100.30890;
 
-            document.addEventListener("deviceready", function () {
-                var posOptions = {timeout: 10000, enableHighAccuracy: true};
-                $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-                    $rootScope.lat  = position.coords.latitude;
-                    $rootScope.lng = position.coords.longitude;
-                }, function(err) {
-                    // console.info('Returned a Geo error');
+            console.log("Iniciando en ionic platform ready");
+
+            document.addEventListener('deviceready',function(){
+                // Start Network
+                // Cordova Network - Listeners
+                $rootScope.networkType = $cordovaNetwork.getNetwork();
+                $rootScope.isOnline = $cordovaNetwork.isOnline();
+
+                if(!$rootScope.isOnline) {
+                    $state.go('app.no-internet');
+                }
+
+                // listen for Online event
+                $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+                    $rootScope.isOnline = true;
                 });
-            }, false);
-            // End GeoLocation
+
+                // listen for Offline event
+                $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+                    $rootScope.isOnline = false;
+                    $state.go('app.no-internet')
+                });
+                // End Cordova Network - Listeners
+            },false);
+
+            document.addEventListener('deviceready',function(){
+                // Start GeoLocation
+                // Initialize variables (Monterrey)
+                // Default position if no GPS data was found
+                $rootScope.lat = 25.67702;
+                $rootScope.lng = -100.30890;
+
+               var posOptions = {timeout: 10000, enableHighAccuracy: true};
+               $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+                   $rootScope.lat  = position.coords.latitude;
+                   $rootScope.lng = position.coords.longitude;
+                   console.log("Entro a geolocalizacion");
+               }, function(err) {
+                   // console.info('Returned a Geo error');
+               });
+                // End GeoLocation
+           },false); 
 
             // Initialize Facebook ID and Token
             $rootScope.facebookId = false;
@@ -567,91 +571,134 @@ angular.module('laReta', [
             $rootScope.isAndroid = ionic.Platform.isAndroid();
             $rootScope.isIOS = ionic.Platform.isIOS();
 
-            $rootScope.devicePlatform = '';
             if ($rootScope.isAndroid) {
                 $rootScope.devicePlatform = 'android';
             } else if ($rootScope.isIOS) {
                 $rootScope.devicePlatform = 'ios';
+            } else {
+                $rootScope.devicePlatform = 'webView';
             }
 
-            // Configuration for push notifications
-            $rootScope.deviceToken = '';
+            document.addEventListener('deviceready',function(){
 
-            var iosConfig = {
-                "badge": true,
-                "sound": true,
-                "alert": true
-            };
+                // Configuration for push notifications
+                var options = {
+                  	android: {
+                  	  senderID: "692235903188"
+                  	},
+                    ios: {
+                      alert: "true",
+                      badge: "true",
+                      sound: "true"
+                    },
+                    windows: {}
+                  };
 
-            var androidConfig = {
-                "senderID": "692235903188"
-            };
+                // initialize
+                $cordovaPushV5.initialize(options).then(function() {
+                    // start listening for new notifications
+                    $cordovaPushV5.onNotification();
+                    // start listening for errors
+                    $cordovaPushV5.onError();
 
-            if (window.cordova) {
-                if ($rootScope.isIOS) {
-                    $cordovaPush.register(iosConfig).then(function (deviceToken) {
+                    // register to get registrationId
+                    $cordovaPushV5.register().then(function(registrationId) {
+                        // `data.registrationId` save it somewhere;
                         // Success -- send deviceToken to server, and store for future use
-                        $rootScope.deviceToken = deviceToken;
-                    }, function (err) {
-                        console.log("Registration error: " + err)
-                    });
+                        $rootScope.deviceToken = registrationId;
+                        $localstorage.set("deviceToken", {'registrationId': registrationId }, true);
+                        console.log("Registro Device Token: " + JSON.stringify(registrationId));
+                    })
+                });
+                
+                $rootScope.eventIdActual = 0;
 
-                    $rootScope.$on('$cordovaPush:notificationReceived', function (event, notification) {
-                        if (notification.alert) {
-                            navigator.notification.alert(notification.alert);
-                        }
-
-                        if (notification.sound) {
-                            var snd = new Media(event.sound);
-                            snd.play();
-                        }
-
-                        if (notification.badge) {
-                            $cordovaPush.setBadgeNumber(notification.badge).then(function (result) {
-                                // Success!
-                            }, function (err) {
-                                // An error occurred. Show a message to the user
-                            });
-                        }
-                    });
-                } else if ($rootScope.isAndroid) {
-
-                    console.log("I tried to register push notification");
-                    $cordovaPush.register(androidConfig).then(function (deviceToken) {
-                        $rootScope.deviceToken = deviceToken;
-                    }, function (err) {
-                        // Error
-                        console.log("Registration error: " + err)
-                    });
-
-                    $rootScope.$on('$cordovaPush:notificationReceived', function (event, notification) {
-                        console.log("Had one of these:" + notification.event);
-                        switch (notification.event) {
-                            case 'registered':
-                                if (notification.regid.length > 0) {
-                                    $rootScope.deviceToken = notification.regid;
+                // triggered every time notification received
+                $rootScope.$on('$cordovaPushV5:notificationReceived', function(event, data){
+                    // data.message,
+                    // data.title,
+                    // data.count,
+                    // data.sound,
+                    // data.image,
+                    // data.additionalData
+                    console.log(JSON.stringify(data));
+                    var action = data.additionalData.action;
+                    var eventId = data.additionalData.id;
+                    var path = $location.path();
+                    var sPath = "";
+                    if (data.message) {
+                        if(action == "eventCreate" || action == "eventFull" 
+                                || action == "eventReminder" || action == "eventCancel"
+                                || action == "participantCancel"){
+                                sPath = "/app/event/view/" + eventId;
+                                if(path != sPath){
+                                    $state.go('app.event-view', { 'eventId': eventId });
+                                }else{
+                                   $state.transitionTo($state.current, { 'eventId': eventId }, {
+                                        reload: true,
+                                        inherit: false,
+                                        notify: true
+                                   });
                                 }
-                                break;
-
-                            case 'message':
-                                // this is the actual push notification. its format depends on the data model from the push server
-                                $rootScope.showMessage(notification.message);
-                                break;
-
-                            case 'error':
-                                alert('GCM error = ' + notification.msg);
-                                break;
-
-                            default:
-                                alert('An unknown GCM event has occurred');
-                                break;
                         }
-                    });
-                }
+                        if(action == "join"){
+                            sPath = "/app/event/participants/" + eventId;
+                            if(path != sPath){
+                                $state.go('app.event-participants', { 'eventId': eventId });
+                            }else{
+                               console.log("Entrando nuevamente: " + sPath); 
+                               $state.transitionTo($state.current, { 'eventId': eventId }, {
+                                        reload: true,
+                                        inherit: false,
+                                        notify: true
+                                   });
+                            }
+                        }
+                        if(action == "message"){
+                            sPath = "/app/event/message/" + eventId;
+                            console.log("Path: " + path);
+                            console.log("sPath: " + sPath);
+                            if(path != sPath){
+                                $state.go('app.event-message-board', { 'eventId': eventId });
+                            }else{
+                               $state.transitionTo($state.current, { 'eventId': eventId }, {
+                                        reload: true,
+                                        inherit: false,
+                                        notify: true
+                                   });
+                            }
+                        }
+                        
+                        $cordovaToast.show(data.message, 'long', 'bottom')
+                                                .then(function(success) {
+                                                  // success
+                                                }, function (error) {
+                                                  // error
+                                                });
+                    }
 
-            }
-            // End push notifications
+                    if (data.sound) {
+                        var snd = new Media(data.sound);
+                        snd.play();
+                    }
 
+                    if (data.additionalData.badge) {
+                        $cordovaPushV5.setBadgeNumber(NewNumber).then(function (result) {
+                            // OK
+                        }, function (err) {
+                            // handle error
+                        });
+                    }
+
+                });
+
+                // triggered every time error occurs
+                $rootScope.$on('$cordovaPushV5:errorOcurred', function(event, e){
+                  // e.message
+                  console.log("cordovaPushV5:errorOcurred: " + e.message);
+                });
+                // End push notifications
+            },false);
 
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -675,13 +722,19 @@ angular.module('laReta', [
             }
 
         });
+
+        // Check for auth
+        /*if ( typeof authService.getUser() === "undefined" || jsonUtility.isObjectEmpty(authService.getUser()) ) {
+            $state.go('app.login');
+        }*/
+
     })
 
     .config(function($stateProvider, $urlRouterProvider, $httpProvider, $ionicConfigProvider, uiGmapGoogleMapApiProvider,
     $cordovaFacebookProvider) {
         // Handle HTTP errors.
         $httpProvider.interceptors.push('responseObserver');
-
+        
         /*
         // Disable JS Scrolling & use native scrolling
         //if(!ionic.Platform.isIOS())$ionicConfigProvider.scrolling.jsScrolling(false);
@@ -709,10 +762,10 @@ angular.module('laReta', [
         // Facebook configuration
         if(window.cordova && window.cordova.plugins) {
             var appID = 786521788124677;
-            var version = "v2.3"; // or leave blank and default is v2.0
+            var version = "v2.5"; // or leave blank and default is v2.0
             $cordovaFacebookProvider.browserInit(appID, version);
         }
--
+        
         $stateProvider
 
             .state('app', {
@@ -885,6 +938,20 @@ angular.module('laReta', [
                     'menuContent': {
                         templateUrl: 'templates/profile.html',
                         controller: 'ProfileSelfCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
+            .state('app.change-password', {
+                cache: false,
+                url: '/change/password',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/changePassword.html',
+                        controller: 'changePasswordCtl'
                     }
                 },
                 data: {

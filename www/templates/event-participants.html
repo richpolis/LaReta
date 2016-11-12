@@ -11,7 +11,7 @@
                 <div class="row" ng-if="user.self == 1">
                     <div class="full-width">
                         <img class="profile-avatar" src="img/blank-avatar.png" ng-if="user.image == null" />
-                        <img class="profile-avatar" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
+                        <img class="profile-avatar" src="{{ user.image }}" ng-if="user.image != null" />
                         <span ng-if="user.owner == 1" class="owner">CREADOR</span>
                         <strong>{{ user.fullName }}</strong><br>
                         <p class="details">
@@ -27,7 +27,7 @@
                 <div class="row" ng-if="user.self != 1" ng-click="viewUser(user.userId)">
                     <div class="full-width">
                         <img class="profile-avatar" src="img/blank-avatar.png" ng-if="user.image == null" />
-                        <img class="profile-avatar" src="data:image/jpeg;base64,{{ user.image }}" ng-if="user.image != null" />
+                        <img class="profile-avatar" src="{{ user.image }}" ng-if="user.image != null" />
                         <span ng-if="user.owner == 1" class="owner">CREADOR</span>
                         <strong>{{ user.fullName }}</strong><br>
                         <p class="details">

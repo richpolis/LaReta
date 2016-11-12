@@ -32,14 +32,15 @@
                     </label>
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Fecha de Nacimiento</span>
-                        <input type="date" placeholder="Fecha" ng-model="user.date">
+                        <input type="text" ng-if="!isIOS" placeholder="Fecha" ng-model="user.dateString" ng-click="showDatePicker()">
+                        <input type="date" ng-if="isIOS" placeholder="Fecha" ng-model="user.date">
                     </label>
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Ciudad</span>
                         <input type="text" placeholder="Ciudad" ng-model="user.city">
                     </label>
                     <label class="item item-input item-select">
-                        <span class="input-label">Sexo</span>
+                        <span class="input-label">Género</span>
                         <select
                                 ng-model="user.gender"
                                 ng-options="gender.id as gender.label for gender in genderOptions"
@@ -67,7 +68,9 @@
             </div>
 
             <div class="padding center">
-                <p class="muted"><input type="checkbox" ng-model="user.terms" ng-required="true"> He leído y acepto el <a href="" ng-click="openPrivacyModal()">Aviso de Privacidad</a></p>
+
+                <p class="muted">
+                <label><input type="checkbox" style="font-size: 36px; margin-left: 10px;" ng-model="user.terms" ng-required="true"> He leído y acepto el</label>&nbsp;<a href="" ng-click="openPrivacyModal()">Aviso de Privacidad</a></p>
             </div>
 
             <div class="actions">

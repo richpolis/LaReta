@@ -5,6 +5,10 @@ node_modules/
 platforms/
 plugins/
 
+##
+
+nbproject/
+
 
 ## Reference: https://github.com/driftyco/ionic/blob/master/.gitignore
 

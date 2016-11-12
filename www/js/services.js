@@ -1,10 +1,10 @@
 angular.module('laReta.services', [])
-
     .service("apiHandler", function($http, $q, authService) {
 
         this.executeRequest = function (url, data) {
 
             var baseUrl = 'http://api.laretaapp.com';
+            //var baseUrl = 'http://localhost:8000/app_dev.php';
             var deferred = $q.defer();
 
             $http({
@@ -50,6 +50,11 @@ angular.module('laReta.services', [])
         // User Edit
         this.updateImage = function (data) {
             return this.executeRequest('/user/image/update', data);
+        };
+
+        // User Edit
+        this.updateGeolocation = function (data) {
+            return this.executeRequest('/user/geolocation/update', data);
         };
 
         // Event List
@@ -110,9 +115,9 @@ angular.module('laReta.services', [])
         // Message Delete
         this.deleteMessage = function (data) {
             return this.executeRequest('/message/delete', data);
-        }
-    })
+        };
 
+    })
     .factory('authService', function($http, $q, $log, $state, $timeout, $localstorage) {
         var obj =  {};
         obj.user = {};
@@ -134,6 +139,7 @@ angular.module('laReta.services', [])
 
         obj.executeRequest = function (url, data) {
             var baseUrl = 'http://api.laretaapp.com';
+            //var baseUrl = 'http://localhost:8000/app_dev.php';
             var deferred = $q.defer();
             var endpoint = baseUrl + url;
 
@@ -167,8 +173,20 @@ angular.module('laReta.services', [])
             return obj.executeRequest('/security/check', data);
         };
 
+        obj.recoverPassword = function(data){
+            return obj.executeRequest('/user/recover/password', data);
+        };
+
         obj.logout = function () {
             return obj.executeRequest('/security/logout')
+        };
+
+        obj.changePassword = function(data){
+            return obj.executeRequest('/user/change/password',data);
+        };
+
+        obj.confirmEmail = function(data){
+            return obj.executeRequest('/user/confirm/email',data);
         };
 
         obj.init = function () {
@@ -178,9 +196,7 @@ angular.module('laReta.services', [])
         obj.init();
         return obj;
     })
-
-
-
+    
     .factory('$localstorage', ['$window', function ($window) {
         return {
             set: function(key, value, isJson) {
@@ -213,7 +229,7 @@ angular.module('laReta.services', [])
         }
     }])
 
-    .factory('responseObserver', function responseObserver($q, $window, $rootScope) {
+    .factory('responseObserver', ['$q','$rootScope', function responseObserver($q, $rootScope) {
         return {
             // optional method
             'request': function(config) {
@@ -251,7 +267,7 @@ angular.module('laReta.services', [])
                 return $q.reject(rejection);
             }
         };
-    })
+    }])
 
     .factory('jsonUtility', function () {
         return {
@@ -270,7 +286,7 @@ angular.module('laReta.services', [])
         }
     })
 
-    .factory('dateUtility', function () {
+    .factory('dateUtility', function ($rootScope) {
         return {
             monthName: function(m) {
                 var month = new Array();
@@ -306,32 +322,77 @@ angular.module('laReta.services', [])
                     return day[d];
                 }
                 return '??';
+            },
+            getDateFromString: function(date){
+                if($rootScope.isIOS){
+                    return date;
+                }else{
+                    var datos = date.split("-");
+                    var fecha = new Date(datos[0],datos[1],datos[2]);
+                    return fecha; 
+                }
+            },
+            getStringFromDate: function(date){
+                if($rootScope.isIOS){
+                    return date;
+                }else{
+                    var ano = parseInt(date.getFullYear(),10);
+                    var mes = parseInt(date.getMonth(),10) + 1;
+                    var dia = parseInt(date.getDate(),10);
+                    var string = (dia>=10?dia:"0" + dia) + "\/" + (mes>=10?mes:"0" + mes) + "\/" + ano;
+                    return string; 
+                }
+            },
+            getStringFromTime: function(time){
+                if($rootScope.isIOS){
+                    return time;
+                }else{
+                    var horas = parseInt(time.getHours(),10);
+                    var minutos = parseInt(time.getMinutes(),10);
+                    var string = '';
+                    if(horas >= 12 && horas <= 23){
+                        horas = (horas == 12?horas: horas - 12);
+                        string = (horas>=10?horas:"0" + horas) + ":" + (minutos>=10?minutos:"0" + minutos) + " pm";
+                    }else{
+                        string = (horas>=10?horas:"0" + horas) + ":" + (minutos>=10?minutos:"0" + minutos) + " am";    
+                    }
+                    return string; 
+                }
             }
         }
     })
 
-    .factory("facebookHandler", function($http, $q) {
+    .factory("facebookHandler", function($http, $q, $localstorage) {
         var obj =  {};
         obj.user = {};
 
         obj.setUser = function (facebookId, facebookToken) {
             obj.user.facebookId = facebookId;
             obj.user.facebookToken = facebookToken;
+            $localstorage.set('userFacebook', obj.user, true);
             return obj.user;
         };
 
+        obj.setUserImageFacebook = function(url){
+            this.getUser();
+            obj.user.image = url;
+            $localstorage.set('userFacebook',obj.user,true);    
+        };
+
         obj.getUser = function () {
+            obj.user = $localstorage.get('userFacebook', {}, true);
             return obj.user;
         };
 
         obj.clear = function () {
             obj.user = {};
+            $localstorage.set('userFacebook', obj.user, true);
             return obj.user;
         };
 
         obj.me = function (authToken) {
 
-            var baseUrl = 'https://graph.facebook.com/v2.5/me?fields=birthday%2Cgender%2Cemail%2Cbio%2Cname' +
+            var baseUrl = 'https://graph.facebook.com/v2.5/me?fields=birthday%2Cgender%2Cemail%2Cname%2Cpicture.width%28300%29.height%28300%29' +
                 '&access_token=' + authToken +
                 '&format=json&method=get&pretty=0&suppress_http_code=1';
             var deferred = $q.defer();
@@ -342,6 +403,33 @@ angular.module('laReta.services', [])
             $http({
                 method: 'GET',
                 dataType: 'json',
+                url: baseUrl,
+                headers: {
+                    'content-type': 'application/json'
+                }
+            }).success(function(data) {
+                deferred.resolve(data);
+            }).error(function(data, status) {
+                deferred.reject(data);
+            });
+
+            return deferred.promise;
+        };
+
+        obj.meFeed = function (params, authToken) {
+
+            var baseUrl = 'https://graph.facebook.com/v2.5/me/feed?' +
+                'access_token=' + authToken +
+                '&format=json&method=get&pretty=0&suppress_http_code=1';
+            var deferred = $q.defer();
+
+            console.log("Endpoint: " + baseUrl);
+            console.log("API Token: " + authToken);
+
+            $http({
+                method: 'POST',
+                dataType: 'json',
+                data: params,
                 url: baseUrl,
                 headers: {
                     'content-type': 'application/json'

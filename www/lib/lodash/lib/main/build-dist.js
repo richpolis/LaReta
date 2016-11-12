@@ -1,10 +1,9 @@
 'use strict';
 
-var _ = require('lodash'),
-    async = require('async'),
+var async = require('async'),
     path = require('path');
 
-var util = require('../common/util');
+var file = require('../common/file');
 
 var basePath = path.join(__dirname, '..', '..'),
     distPath = path.join(basePath, 'dist'),
@@ -23,8 +22,8 @@ function onComplete(error) {
 
 function build() {
   async.series([
-    util.copyFile(baseLodash, distLodash),
-    util.minFile(distLodash)
+    file.copy(baseLodash, distLodash),
+    file.min(distLodash)
   ], onComplete);
 }
 
