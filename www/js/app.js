@@ -12,7 +12,7 @@ angular.module('laReta', [
     
     .run(function($http, $ionicPlatform, authService, $rootScope, $state, $ionicHistory, 
                   jsonUtility, $cordovaNetwork, $ionicModal, $cordovaGeolocation, 
-                  $cordovaPushV5, $localstorage, $ionicLoading, $ionicPopup, 
+                  $cordovaPushV5, $localStorage, $ionicLoading, $ionicPopup, 
                   $cordovaToast, $location) {
 
 
@@ -49,7 +49,7 @@ angular.module('laReta', [
         // Force Logout
         $rootScope.forceLogout = function () {
             authService.setUser({});
-            $localstorage.set('userFacebook',{},true);
+            $localStorage.set('userFacebook',{},true);
             $state.go('app.login');
             $ionicHistory.nextViewOptions({disableBack: 'true'});
             $ionicHistory.clearHistory();
@@ -606,7 +606,7 @@ angular.module('laReta', [
                         // `data.registrationId` save it somewhere;
                         // Success -- send deviceToken to server, and store for future use
                         $rootScope.deviceToken = registrationId;
-                        $localstorage.set("deviceToken", {'registrationId': registrationId }, true);
+                        $localStorage.set("deviceToken", {'registrationId': registrationId }, true);
                         console.log("Registro Device Token: " + JSON.stringify(registrationId));
                     })
                 });
@@ -764,6 +764,7 @@ angular.module('laReta', [
             var appID = 786521788124677;
             var version = "v2.5"; // or leave blank and default is v2.0
             $cordovaFacebookProvider.browserInit(appID, version);
+            //c0c8b37d325e2b2768f944f38056edc7
         }
         
         $stateProvider
@@ -998,6 +999,45 @@ angular.module('laReta', [
                 },
                 data: {
                     requireLogin: false
+                }
+            })
+
+            .state('app.canchas', {
+                url: '/canchas',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/canchas.html',
+                        controller: 'CanchasCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
+            .state('app.cancha', {
+                url: '/canchas/:canchaId',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/cancha.html',
+                        controller: 'CanchaCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
+            .state('app.cancha-calendario', {
+                url: '/calendario/:canchaId',
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/calendario.html',
+                        controller: 'CalendarioCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
                 }
             })
 

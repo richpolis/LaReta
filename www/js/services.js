@@ -3,8 +3,9 @@ angular.module('laReta.services', [])
 
         this.executeRequest = function (url, data) {
 
-            var baseUrl = 'http://api.laretaapp.com';
-            //var baseUrl = 'http://localhost:8000/app_dev.php';
+            //var baseUrl = 'http://api.laretaapp.com';
+            var baseUrl = 'http://localhost:8023/app_dev.php';
+            //var baseUrl ='https://stormy-brushlands-47534.herokuapp.com';
             var deferred = $q.defer();
 
             $http({
@@ -116,16 +117,41 @@ angular.module('laReta.services', [])
         this.deleteMessage = function (data) {
             return this.executeRequest('/message/delete', data);
         };
+        
+        //  Cancha List
+        this.listCancha = function (data) {
+            return this.executeRequest('/canchas/list', data);
+        };
+        
+        //  Cancha View
+        this.viewCancha = function (data) {
+            return this.executeRequest('/canchas/view', data);
+        };
+
+        // Cancha New
+        this.newCancha = function (data) {
+            return this.executeRequest('/canchas/new', data)
+        };
+        
+        // Cancha Edit
+        this.editCancha = function (data) {
+            return this.executeRequest('/canchas/edit', data)
+        };
+
+        // Cancha Delete
+        this.deleteCancha = function (data) {
+            return this.executeRequest('/canchas/delete', data);
+        };
 
     })
-    .factory('authService', function($http, $q, $log, $state, $timeout, $localstorage) {
+    .factory('authService', function($http, $q, $log, $state, $timeout, $localStorage) {
         var obj =  {};
         obj.user = {};
 
         obj.setUser = function (user) {
             obj.user = {};
             obj.user = user;
-            $localstorage.set('user', user, true);
+            $localStorage.set('user', user, true);
             return obj.user;
         };
 
@@ -138,8 +164,9 @@ angular.module('laReta.services', [])
         };
 
         obj.executeRequest = function (url, data) {
-            var baseUrl = 'http://api.laretaapp.com';
-            //var baseUrl = 'http://localhost:8000/app_dev.php';
+            //var baseUrl = 'http://api.laretaapp.com';
+            var baseUrl = 'http://localhost:8023/app_dev.php';
+            //var baseUrl ='https://stormy-brushlands-47534.herokuapp.com';
             var deferred = $q.defer();
             var endpoint = baseUrl + url;
 
@@ -190,14 +217,14 @@ angular.module('laReta.services', [])
         };
 
         obj.init = function () {
-            obj.user = $localstorage.get('user', {}, true);
+            obj.user = $localStorage.get('user', {}, true);
         };
 
         obj.init();
         return obj;
     })
     
-    .factory('$localstorage', ['$window', function ($window) {
+    .factory('$localStorage', ['$window', function ($window) {
         return {
             set: function(key, value, isJson) {
                 if (typeof isJson === 'undefined') { isJson = false; }
@@ -362,37 +389,37 @@ angular.module('laReta.services', [])
         }
     })
 
-    .factory("facebookHandler", function($http, $q, $localstorage) {
+    .factory("facebookHandler", function($http, $q, $localStorage) {
         var obj =  {};
         obj.user = {};
 
         obj.setUser = function (facebookId, facebookToken) {
             obj.user.facebookId = facebookId;
             obj.user.facebookToken = facebookToken;
-            $localstorage.set('userFacebook', obj.user, true);
+            $localStorage.set('userFacebook', obj.user, true);
             return obj.user;
         };
 
         obj.setUserImageFacebook = function(url){
             this.getUser();
             obj.user.image = url;
-            $localstorage.set('userFacebook',obj.user,true);    
+            $localStorage.set('userFacebook',obj.user,true);    
         };
 
         obj.getUser = function () {
-            obj.user = $localstorage.get('userFacebook', {}, true);
+            obj.user = $localStorage.get('userFacebook', {}, true);
             return obj.user;
         };
 
         obj.clear = function () {
             obj.user = {};
-            $localstorage.set('userFacebook', obj.user, true);
+            $localStorage.set('userFacebook', obj.user, true);
             return obj.user;
         };
 
         obj.me = function (authToken) {
 
-            var baseUrl = 'https://graph.facebook.com/v2.5/me?fields=birthday%2Cgender%2Cemail%2Cname%2Cpicture.width%28300%29.height%28300%29' +
+            var baseUrl = 'https://graph.facebook.com/v2.5/me?fields=birthday%2Cgender%2Cbio%2Cemail%2Cname%2Cpicture.width%28300%29.height%28300%29' +
                 '&access_token=' + authToken +
                 '&format=json&method=get&pretty=0&suppress_http_code=1';
             var deferred = $q.defer();
@@ -420,7 +447,7 @@ angular.module('laReta.services', [])
 
             var baseUrl = 'https://graph.facebook.com/v2.5/me/feed?' +
                 'access_token=' + authToken +
-                '&format=json&method=get&pretty=0&suppress_http_code=1';
+                '&format=json&method=post&pretty=0&suppress_http_code=1';
             var deferred = $q.defer();
 
             console.log("Endpoint: " + baseUrl);

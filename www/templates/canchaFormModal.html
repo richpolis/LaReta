@@ -1,0 +1,75 @@
+<ion-modal-view>
+        <ion-header-bar>
+            <h1 class="title">Cancha {{cancha.name}}</h1>
+        </ion-header-bar>
+        <ion-content>
+            <form id="canchaForm" name="canchaForm">
+            <div class="box">
+                <div class="list">
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Nombre</span>
+                        <input type="text" placeholder="Nombre de la cancha" ng-model="cancha.name" ng-required="true">
+                    </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Descripción</span>
+                        <textarea rows="6" placeholder="Detalles sobre la cancha.." ng-model="cancha.description" ng-required="true"></textarea>
+                    </label>
+                    <div class="actions">
+                        <button class="button button-block button-primary-skew" type="button" ng-click="canchaImagen()">Foto cancha</button>
+                    </div>
+                    <div class="item" ng-click="openModal()">
+                        <span>Dirección</span>
+                        <span class="pull-right input-text-button" ng-if="!cancha.address">Ver mapa <i class="fa fa-map-o fa-fw orange"></i></span>
+                        <span class="pull-right input-text-button" ng-if="cancha.address">Registrada <i class="fa fa-map-pin fa-fw orange"></i></span>
+                    </div>
+                    <div class="item item-toggle">
+                        Es publica
+                        <label class="toggle toggle-assertive">
+                        <input type="checkbox" ng-model="cancha.is_public">
+                        <div class="track">
+                            <div class="handle"></div>
+                        </div>
+                        </label>
+                    </div>
+                    <div class="item item-divider" ng-if="!cancha.is_public">
+                        Horarios
+                    </div>
+                    <label class="item item-input" ng-if="!cancha.is_public">
+                        <span class="input-label">Abre</span>
+                        <input type="text" ng-if="!isIOS" placeholder="Hora" ng-model="cancha.hora_inicio_string" ng-required="true"  ng-click="showTimePicker()">
+                        <input type="time" ng-if="isIOS" placeholder="Hora" ng-model="cancha.hora_inicio" ng-required="true">
+                    </label>
+                    <label class="item item-input" ng-if="!cancha.is_public">
+                        <span class="input-label">Cierra</span>
+                        <input type="text" ng-if="!isIOS" placeholder="Hora" ng-model="event.hora_fin_string" ng-required="true"  ng-click="showTimePicker()">
+                        <input type="time" ng-if="isIOS" placeholder="Hora" ng-model="event.hora_fin" ng-required="true">
+                    </label>
+                    <div class="item item-divider" ng-if="!cancha.is_public">
+                        Dias disponibles
+                    </div>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.dom" ng-if="!cancha.is_public">Domingo</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.lun" ng-if="!cancha.is_public">Lunes</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.mar" ng-if="!cancha.is_public">Martes</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.mie" ng-if="!cancha.is_public">Miercoles</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.jue" ng-if="!cancha.is_public">Jueves</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.vie" ng-if="!cancha.is_public">Viernes</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.dias_disponibles.sab" ng-if="!cancha.is_public">Sabado</ion-checkbox>
+                    <label class="item item-input item-stacked-label" ng-if="!cancha.is_public">
+                        <span class="input-label">Precio</span>
+                        <input type="number" placeholder="Precio por juego" ng-model="cancha.name" ng-required="true">
+                    </label>
+                    <div class="item item-divider" ng-if="!cancha.is_public">
+                        Tipos de pago
+                    </div>
+                    <ion-checkbox ng-model="cancha.tipos_pago.efectivo" ng-if="!cancha.is_public">Efectivo</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.tipos_pago.paypal" ng-if="!cancha.is_public">Paypal</ion-checkbox>
+                    <ion-checkbox ng-model="cancha.tipos_pago.credito" ng-if="!cancha.is_public">Credito</ion-checkbox>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="button button-block button-primary-skew" type="submit" ng-disabled="canchaForm.$invalid" ng-click="canchaForm.$valid && editarCancha()">Actualizar</button>
+            </div>
+        </form>
+        </ion-content>
+    </ion-modal-view>

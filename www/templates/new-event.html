@@ -12,18 +12,9 @@
                                 convert-to-number
                                 ng-options="sport.id as sport.name for sport in sportOptions"
                                 ng-required="true">
-                            <option value="" ng-if="false"></option>
+                            <option value="" selected>Seleccionar</option>
                         </select>
                     </label>
-                    <label class="item item-input item-stacked-label">
-                        <span class="input-label">Lugar</span>
-                        <input type="text" placeholder="Nombre de la cancha, establecimiento, estadio.." ng-model="event.location" ng-required="true">
-                    </label>
-                    <div class="item" ng-click="openModal()">
-                        <span>Dirección</span>
-                        <span class="pull-right input-text-button" ng-if="!event.address">Ver mapa <i class="fa fa-map-o fa-fw orange"></i></span>
-                        <span class="pull-right input-text-button" ng-if="event.address">Registrada <i class="fa fa-map-pin fa-fw orange"></i></span>
-                    </div>
                     <!--
                     <label class="item item-input item-stacked-label">
                         <span class="input-label">Fecha</span>
@@ -44,6 +35,15 @@
                         <input type="text" ng-if="!isIOS" placeholder="Hora" ng-model="event.timeString" ng-required="true"  ng-click="showTimePicker()">
                         <input type="time" ng-if="isIOS" placeholder="Hora" ng-model="event.time" ng-required="true">
                     </label>
+                    <label class="item item-input item-stacked-label">
+                        <span class="input-label">Lugar</span>
+                        <input type="text" placeholder="Nombre de la cancha, establecimiento, estadio.." ng-model="event.location" ng-required="true">
+                    </label>
+                    <div class="item" ng-click="openModal()">
+                        <span>Dirección</span>
+                        <span class="pull-right input-text-button" ng-if="!event.address">Ver mapa <i class="fa fa-map-o fa-fw orange"></i></span>
+                        <span class="pull-right input-text-button" ng-if="event.address">Registrada <i class="fa fa-map-pin fa-fw orange"></i></span>
+                    </div>
                     <label class="item item-input item-select">
                         <div class="input-label">
                             Habilidad

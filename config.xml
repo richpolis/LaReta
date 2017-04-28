@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.laretaapp.laretaapp" version="1.2.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.laretaapp.laretaapp" version="1.4.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>La Reta</name>
     <description>
         Event creation application for sports
-    </description>
-    <author email="email@angle.mx" href="http://angle.mx/">
-      Angle
-    </author>
+  </description>
+    <author email="richpolis@gmail.com" href="http://angle.mx/">
+      Ricardo Alcantara G
+  </author>
     <content src="index.html" />
     <access origin="*" />
     <access launch-external="yes" origin="geo:*" />
@@ -55,6 +55,7 @@
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
         <icon height="80" src="resources/ios/icon/icon-40@2x.png" width="80" />
+        <icon height="120" src="resources/ios/icon/icon-40@3x.png" width="120" />
         <icon height="50" src="resources/ios/icon/icon-50.png" width="50" />
         <icon height="100" src="resources/ios/icon/icon-50@2x.png" width="100" />
         <icon height="60" src="resources/ios/icon/icon-60.png" width="60" />
@@ -91,4 +92,5 @@
     <plugin name="cordova-plugin-datepicker" spec="https://github.com/VitaliiBlagodir/cordova-plugin-datepicker.git" />
     <plugin name="cordova-plugin-camera" spec="~2.2.0" />
     <plugin name="cordova-plugin-geolocation" spec="~2.3.0" />
+    <plugin name="com.paypal.cordova.mobilesdk" spec="~3.4.0" />
 </widget>

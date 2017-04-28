@@ -13,7 +13,7 @@ angular.module('laReta.controllers', [])
     })
 
     .controller('LoginCtrl', function ($rootScope, $scope, $timeout, $log, $state, authService, $ionicHistory,
-                                       $cordovaFacebook, facebookHandler, $localstorage) {
+                                       $cordovaFacebook, facebookHandler, $localStorage) {
         $scope.loginData = {
             'devicePlatform': $rootScope.devicePlatform,
             'deviceToken':    $rootScope.deviceToken
@@ -23,7 +23,7 @@ angular.module('laReta.controllers', [])
         $scope.doLogin = function (data) {
 
             if($rootScope.deviceToken == "undefined"){
-                var token = $localstorage.get("deviceToken","{}",true);
+                var token = $localStorage.get("deviceToken","{}",true);
                 $rootScope.deviceToken = token.registrationId;
             }
             // obligando a que ponga los datos.
@@ -64,11 +64,12 @@ angular.module('laReta.controllers', [])
         // Facebook Login
         $scope.facebookLogin = function () {
             // Business Logic
-            $cordovaFacebook.login(["public_profile", "email", "user_birthday", "user_about_me"]).then(function(response) {
+            $cordovaFacebook.login(["public_profile","email", "user_about_me", "user_birthday"]).then(function(response) {
                 console.log("Login Facebook");
                 console.log(JSON.stringify(response));
                 if (response.hasOwnProperty('authResponse')) {
                     $scope.loginData.facebookId = response.authResponse.userID;
+                    $scope.loginData.facebookToken = response.authResponse.accessToken;
                     facebookHandler.setUser(response.authResponse.userID,response.authResponse.accessToken);
                     $rootScope.facebookId = response.authResponse.userID;
                     $rootScope.facebookToken = response.authResponse.accessToken;
@@ -96,7 +97,7 @@ angular.module('laReta.controllers', [])
                         $rootScope.showMessage("Se ha enviado una nueva contraseña a su correo");
                     }else{
                         $rootScope.error(
-                            $rootScope.getErrorDescription(data.error)
+                            $rootScope.getErrorDescription(result.error)
                         );
                     }    
                 },function(err){
@@ -113,7 +114,7 @@ angular.module('laReta.controllers', [])
 
     .controller('SignupCtrl', function($scope, apiHandler, $state, $filter, $rootScope, $ionicPopup, $ionicHistory,
                                        $cordovaFacebook, facebookHandler, $stateParams, authService, jsonUtility,
-                                       $localstorage, $cordovaDatePicker, dateUtility) {
+                                       $localStorage, $cordovaDatePicker, dateUtility) {
         // Initialize variables
         $scope.user = {};
         $scope.user.gender = 0;
@@ -205,7 +206,7 @@ angular.module('laReta.controllers', [])
 
                 if(apiResponse.hasOwnProperty('picture')){
                     $scope.user.image = apiResponse.picture.data.url;
-                    $localstorage.set('user',$scope.user,true);
+                    $localStorage.set('user',$scope.user,true);
                 }else{
                     $scope.user.image = null;
                 }
@@ -217,7 +218,7 @@ angular.module('laReta.controllers', [])
         // Facebook Signup
         $scope.facebookSignup = function () {
             // Business Logic
-            $cordovaFacebook.login(["public_profile", "email", "user_birthday", "user_about_me","user_posts","publish_actions"]).then(function(response) {
+            $cordovaFacebook.login(["public_profile","email", "user_about_me", "user_birthday"]).then(function(response) {
             
                 $scope.user.facebookId = response.authResponse.userID;
                 $scope.user.facebookToken  = response.authResponse.accessToken;
@@ -257,7 +258,7 @@ angular.module('laReta.controllers', [])
 
                     if(apiResponse.hasOwnProperty('picture')){
                         $scope.user.image = apiResponse.picture.data.url;
-                        $localstorage.set('user',$scope.user,true);
+                        $localStorage.set('user',$scope.user,true);
                     }else{
                         $scope.user.image = null;
                     }
@@ -294,7 +295,7 @@ angular.module('laReta.controllers', [])
                 } else {
 
                     if($rootScope.deviceToken == "undefined"){
-                        var token = $localstorage.get("deviceToken","{}",true);
+                        var token = $localStorage.get("deviceToken","{}",true);
                         $rootScope.deviceToken = token.registrationId;
                     }
                     // obligando a que ponga los datos.
@@ -340,12 +341,12 @@ angular.module('laReta.controllers', [])
         };
     })
 
-    .controller('LogoutCtrl', function($scope, authService, $state, $ionicHistory, $localstorage) {
+    .controller('LogoutCtrl', function($scope, authService, $state, $ionicHistory, $localStorage) {
         var promise = authService.logout();
         promise.then(function(data) {
             if (data.error == 0) {
                 authService.setUser({});
-                $localstorage.set('userFacebook',{}, true);
+                $localStorage.set('userFacebook',{}, true);
                 $state.go('app.login');
                 $ionicHistory.nextViewOptions({disableBack: 'true'});
                 $ionicHistory.clearHistory();
@@ -365,7 +366,7 @@ angular.module('laReta.controllers', [])
     })
 
     .controller('HomeCtrl', function($scope, $rootScope, $state, $ionicHistory, authService, 
-        jsonUtility, apiHandler, $cordovaGeolocation, $cordovaFacebook, facebookHandler) {
+        jsonUtility, apiHandler, $cordovaGeolocation, $cordovaFacebook, facebookHandler, $cordovaSocialSharing, $ionicPopup) {
         // Check for auth
         if ( typeof authService.getUser() === "undefined" || jsonUtility.isObjectEmpty(authService.getUser()) ) {
             $rootScope.forceLogout();
@@ -409,44 +410,10 @@ angular.module('laReta.controllers', [])
             $ionicHistory.clearCache();
             */
         };
-
-        $scope.publicarFacebook = function(){
-            var foptions = {
-                message: 'Este es un mensaje de prueba desde Cordova Framework',
-                link: 'https://assets-cdn.github.com/images/modules/open_graph/github-mark.png'
-            };
-
-            console.log(JSON.stringify(foptions));
-
-            var fbPostSuccess = function (postId) {
-                //This function returns the post id from facebook.
-                alert(postId);
-            };
-
-            var userFacebook = $localstorage.get('userFacebook',{},true);
-
-            // Check for parameters
-            if ( userFacebook.facebookToken ) {
-
-                var promise = facebookHandler.meFeed(foptions, userFacebook.facebookToken);
-
-                promise.then(function(apiResponse) {
-                    console.log(JSON.stringify(apiResponse));
-
-                    if(apiResponse.hasOwnProperty('id')){
-
-                        console.log("Mensaje posteado " + apiResponse.id);
-                    }else{
-                        console.log("Error: " + JSON.stringify(apiResponse));
-                    }
-                });
-            }
-
-        }
     })
 
     .controller('ProfileSelfCtrl', function($scope, apiHandler, $state, $rootScope, 
-        $cordovaCamera, $cordovaDatePicker, facebookHandler, $localstorage, 
+        $cordovaCamera, $cordovaDatePicker, facebookHandler, $localStorage, 
         $cordovaDevice, dateUtility) {
         // Initialize user
         $scope.user = {};
@@ -456,7 +423,7 @@ angular.module('laReta.controllers', [])
 
         $scope.version = $cordovaDevice.getVersion();
 
-        $scope.userFacebook = $localstorage.get('userFacebook',{},true);
+        $scope.userFacebook = $localStorage.get('userFacebook',{},true);
 
         var promise = apiHandler.viewUser();
 
@@ -492,7 +459,7 @@ angular.module('laReta.controllers', [])
                                 if(!$scope.user.image || $scope.user.image != image){
                                     $scope.user.image = image;
                                     apiHandler.updateImage($scope.user).then(function(imageData){
-                                        $localstorage.set('user',user,true);
+                                        $localStorage.set('user',user,true);
                                         $state.transitionTo($state.current, {}, {
                                                     reload: true,
                                                     inherit: false,
@@ -909,9 +876,9 @@ angular.module('laReta.controllers', [])
     })
 
     .controller('NewEventCtrl', function($rootScope, $scope, $location, 
-        $stateParams, apiHandler, $state, $ionicHistory, uiGmapGoogleMapApi, 
+        $stateParams, apiHandler, facebookHandler, $state, $ionicHistory, uiGmapGoogleMapApi, 
         $ionicModal, $ionicPopup, $cordovaDatePicker, $cordovaDevice, dateUtility,
-        $localstorage, $cordovaGeolocation, $ionicScrollDelegate, $cordovaSocialSharing) {
+        $localStorage, $cordovaGeolocation, $ionicScrollDelegate, $cordovaSocialSharing) {
         // Needed variables
         $scope.event = {};
         $scope.event.skill = 0;
@@ -1133,32 +1100,65 @@ angular.module('laReta.controllers', [])
                 $ionicHistory.clearHistory();
                 $ionicHistory.clearCache();
                 $ionicHistory.nextViewOptions({disableBack: 'true'});
+              
+                //$scope.returnedEvent = {'id': 61};  
+                $scope.compartirEvento();
 
-                var confirmPopup = $ionicPopup.confirm({
-                    title: '¡Compartir La Reta!',
-                    template: '<strong>¿Quieres compartir tu Reta?</strong>'
-                });
 
-                confirmPopup.then(function(res){
-                    if(res){
-                        var sportName = '';
-                        for(var cont=0; cont<$scope.sportOptions.length; cont++){
-                            if($scope.sportOptions[cont].id == $scope.event.sport){
-                                sportName = $scope.sportOptions[cont].name;
-                            }
+            });
+            
+        };
+
+        $scope.compartirEvento = function(){
+            var confirmPopup = $ionicPopup.confirm({
+                title: '¡Compartir La Reta!',
+                template: '<strong>¿Quieres compartir tu Reta?</strong>'
+            });
+
+            confirmPopup.then(function(res){
+                if(res){
+                    var sportName = '';
+                    for(var cont=0; cont<$scope.sportOptions.length; cont++){
+                        if($scope.sportOptions[cont].id == $scope.event.sport){
+                            sportName = $scope.sportOptions[cont].name;
                         }
-                        var message = '¡Se ha creado la nueva reta de ' + sportName+', descarga la app y únete a La Reta!';
-                        var subject = 'La Reta';
-                        var image1 = 'https://s3-us-west-1.amazonaws.com/lareta/images/logo-512.png';
-                        var link = '';
+                    }
+                    var message = '¡Se ha creado la nueva reta de ' + sportName+', descarga la app y únete a La Reta!';
+                    var subject = 'La Reta';
+                    var image1 = 'https://s3-us-west-1.amazonaws.com/lareta/images/logo-512.png';
+                    var link = '';
 
-                        if($rootScope.isAndroid){
-                            link = 'http://play.google.com/store/apps/details?id=com.laretaapp.laretaapp';
-                        }else if($rootScope.isIOS){
-                            link = 'https://itunes.apple.com/us/app/la-reta/id1064095543';
-                        }
+                    if($rootScope.isAndroid){
+                        link = 'http://play.google.com/store/apps/details?id=com.laretaapp.laretaapp';
+                    }else if($rootScope.isIOS){
+                        link = 'https://itunes.apple.com/us/app/la-reta/id1064095543';
+                    }
 
+                    link = "http://www.laretaapp.com";
 
+                    var userFacebook = facebookHandler.getUser();
+
+                    if(userFacebook.facebookId){
+
+                        //Share via native Facebook
+                        $cordovaSocialSharing.shareViaFacebookWithPasteMessageHint(message, null, link, subject).then(function(result) {
+                            // success
+                            console.log("Share completed? " + result.completed); // On Android apps mostly return false even while it's true
+                            console.log("Shared to app: " + result.app); // On Android result.app is currently empty. On iOS it's empty when sharing is cancelled (result.completed=false)
+                            var alertPopup = $ionicPopup.alert({
+                                title: 'La Reta',
+                                template: '¡Gracias por compartir!'
+                            });
+
+                            alertPopup.then(function(res) {
+                                $state.go('app.event-view', { 'eventId': $scope.returnedEvent.id });
+                            });
+                        }, function(err) {
+                            // error
+                            console.log("Sharing failed with message: " + err);
+                            $state.go('app.event-view', { 'eventId': $scope.returnedEvent.id });
+                        });
+                     }else{
                         //Share via native sheet
                         $cordovaSocialSharing.share(message, subject, null, link).then(function(result) {
                             // success
@@ -1177,15 +1177,13 @@ angular.module('laReta.controllers', [])
                             console.log("Sharing failed with message: " + err);
                             $state.go('app.event-view', { 'eventId': $scope.returnedEvent.id });
                         });
-                    }else{
-                        $state.go('app.event-view', { 'eventId': $scope.returnedEvent.id });
                     }
-                });
-
-                
-
+                }else{
+                    $state.go('app.event-view', { 'eventId': $scope.returnedEvent.id });
+                }
             });
-        };
+        }
+
         // End create event function
 
         uiGmapGoogleMapApi.then(function(maps) {
@@ -1199,15 +1197,18 @@ angular.module('laReta.controllers', [])
         $scope.centerOnMe = function () {
           if (!$scope.map)
             return;
+          $rootScope.showLoader(true);  
           var posOptions = {timeout: 10000, enableHighAccuracy: true};
           $cordovaGeolocation
             .getCurrentPosition(posOptions)
             .then(function (position) {
+                $rootScope.showLoader(false);
               $rootScope.lat = position.coords.latitude;
               $rootScope.lng = position.coords.longitude;
               $scope.event.direction = "Mi ubicacion";
               $ionicScrollDelegate.scrollTop();
             }, function (err) {
+              $rootScope.showLoader(false);  
               $ionicPopup.alert({
                 title: 'Error de localizacion!',
                 template: 'No esta activa la localizacion'
@@ -1236,11 +1237,6 @@ angular.module('laReta.controllers', [])
                 window.history.back();
             } else {
                 $scope.event = response.data;
-
-                if(newEvent.compartir){
-                    $localstorage.set('newEvent',{'compartir': false}, true);
-                    $scope.shareNewEvent();
-                }
 
                 uiGmapGoogleMapApi.then(function(maps) {
                     $scope.marker = {
@@ -1492,6 +1488,93 @@ angular.module('laReta.controllers', [])
             var element = document.getElementById("textarea-comment");
             element.style.height =  element.scrollHeight + "px";
         }
-    });
+    })
+    .controller('CanchasCtrl', function($rootScope, $localStorage, $scope, apiHandler, $state) {
+
+        var user = $localStorage.get('user',{}, true);
+        var promise = apiHandler.listCancha(data);
+
+        promise.then(function (response) {
+            console.log("Response:");
+            console.log(response);
+
+            if (response.error != 0) {
+                // TODO: throw popup
+                $rootScope.error('Ocurrió un error en la operación.');
+                window.history.back();
+            } else {
+                $scope.canchas = response.data;
+                $scope.canchas = [
+                    {
+                        id: 1,
+                        name: 'cancha de prueba',
+                        descripcion: 'prueba de descripcion de cancha',
+                        hora_inicio: new Date('time short'),
+                        hora_fin: new Date('time short'),
+                        dias_disponibles: '0:0:0:0:0:0:0',
+                        precio: 150.00,
+                        is_public: true,
+                        tipo_pago: '0:0:0'
+                    },
+                    {
+                        id: 2,
+                        name: 'cancha de prueba 2',
+                        descripcion: 'prueba de descripcion de cancha 2',
+                        hora_inicio: new Date('time short'),
+                        hora_fin: new Date('time short'),
+                        dias_disponibles: '0:0:0:0:0:0:0',
+                        precio: 200.00,
+                        is_public: true,
+                        tipo_pago: '0:0:0'
+                    },
+                ];
+            }
+        });
+        
+    })    
+    .controller('CanchaCtrl', function($rootScope, $scope, $stateParams, apiHandler, $state) {
+        var canchaId = $stateParams["canchaId"];
+
+        var data = {"canchaId": canchaId};
+        $scope.canchaId = canchaId;
+
+        var promise = apiHandler.viewCanchas(data);
+        promise.then(function (result) {
+            if (result.error != 0) {
+                $rootScope.error(
+                    $rootScope.getErrorDescription(result.error)
+                );
+            } else {
+                $scope.cancha = result.data;
+                $scope.canchas = [
+                    {
+                        id: 1,
+                        name: 'cancha de prueba',
+                        descripcion: 'prueba de descripcion de cancha',
+                        hora_inicio: new Date('time short'),
+                        hora_fin: new Date('time short'),
+                        dias_disponibles: '0:0:0:0:0:0:0',
+                        precio: 150.00,
+                        is_public: true,
+                        tipo_pago: '0:0:0'
+                    },
+                    {
+                        id: 2,
+                        name: 'cancha de prueba 2',
+                        descripcion: 'prueba de descripcion de cancha 2',
+                        hora_inicio: new Date('time short'),
+                        hora_fin: new Date('time short'),
+                        dias_disponibles: '0:0:0:0:0:0:0',
+                        precio: 200.00,
+                        is_public: true,
+                        tipo_pago: '0:0:0'
+                    },
+                ];
+                $scope.cancha = $scope.canchas[canchaId-1];
+            }
+        });
+        
+    })    
+;
 
 
