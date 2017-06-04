@@ -4,15 +4,20 @@ angular.module('laReta.services', [])
         this.executeRequest = function (url, data) {
 
             //var baseUrl = 'http://api.laretaapp.com';
-            var baseUrl = 'http://localhost:8023/app_dev.php';
-            //var baseUrl ='https://stormy-brushlands-47534.herokuapp.com';
+            //var baseUrl = 'http://localhost:8023/app_dev.php';
+            var baseUrl ='https://pacific-ridge-59514.herokuapp.com';
+            var endpoint = baseUrl + url;
             var deferred = $q.defer();
+
+            console.log("Endpoint: " + endpoint);
+            console.log("Data:");
+            console.log(JSON.stringify(data));
 
             $http({
                 method: 'POST',
                 data: data || {},
                 dataType: 'json',
-                url: baseUrl + url,
+                url: endpoint,
                 headers: {
                     'content-type': 'application/json',
                     'x-authorization': authService.getApiKey()
@@ -130,17 +135,47 @@ angular.module('laReta.services', [])
 
         // Cancha New
         this.newCancha = function (data) {
-            return this.executeRequest('/canchas/new', data)
+            return this.executeRequest('/canchas/new', data);
         };
         
         // Cancha Edit
         this.editCancha = function (data) {
-            return this.executeRequest('/canchas/edit', data)
+            return this.executeRequest('/canchas/edit', data);
         };
 
         // Cancha Delete
         this.deleteCancha = function (data) {
             return this.executeRequest('/canchas/delete', data);
+        };
+
+        //  Reservaciones List <CalendarioCancha>
+        this.listReservacionesForAdmin = function (data) {
+            return this.executeRequest('/calendario/canchas/list/admin', data);
+        };
+
+        //  Reservaciones List <CalendarioCancha>
+        this.listReservacionesForCancha = function (data) {
+            return this.executeRequest('/calendario/canchas/list/cancha', data);
+        };
+
+        //  Reservaciones View <CalendarioCancha>
+         this.viewReservacion = function (data) {
+            return this.executeRequest('/calendario/canchas/view', data);
+        };
+
+        // Reservaciones New <CalendarioCancha>
+        this.newReservacion = function (data) {
+            return this.executeRequest('/calendario/canchas/new', data);
+        };
+
+        // Reservaciones Edit <CalendarioCancha>
+        this.editReservacion = function (data) {
+            return this.executeRequest('/calendario/canchas/edit', data);
+        };
+
+        // Reservaciones Delete <CalendarioCancha>
+        this.deleteReservacion = function (data) {
+            return this.executeRequest('/calendario/canchas/delete', data);
         };
 
     })
@@ -165,8 +200,9 @@ angular.module('laReta.services', [])
 
         obj.executeRequest = function (url, data) {
             //var baseUrl = 'http://api.laretaapp.com';
-            var baseUrl = 'http://localhost:8023/app_dev.php';
-            //var baseUrl ='https://stormy-brushlands-47534.herokuapp.com';
+            //var baseUrl = 'http://localhost:8023/app_dev.php';
+            var baseUrl ='https://pacific-ridge-59514.herokuapp.com';
+            
             var deferred = $q.defer();
             var endpoint = baseUrl + url;
 
@@ -385,6 +421,15 @@ angular.module('laReta.services', [])
                     }
                     return string; 
                 }
+            },
+            getStringFromDateTime: function(datetime){
+                debugger;
+                return datetime.getFullYear()
+                + '-' + ((datetime.getMonth() + 1) < 10 ? '0':'') + (datetime.getMonth() + 1)
+                + '-' + (datetime.getDate() < 10 ? '0':'') + datetime.getDate()
+                + ' ' + (datetime.getHours()  < 10 ? '0':'') + datetime.getHours()
+                + ':' + (datetime.getMinutes() < 10 ? '0':'') + datetime.getMinutes()
+                + ":00";
             }
         }
     })

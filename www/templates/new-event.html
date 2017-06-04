@@ -35,15 +35,18 @@
                         <input type="text" ng-if="!isIOS" placeholder="Hora" ng-model="event.timeString" ng-required="true"  ng-click="showTimePicker()">
                         <input type="time" ng-if="isIOS" placeholder="Hora" ng-model="event.time" ng-required="true">
                     </label>
-                    <label class="item item-input item-stacked-label">
+
+                    <!-- se cambia por el administrador de canchas o lugares -->    
+                    <!--label class="item item-input item-stacked-label" ng-if="!event.seleccionarCancha">
                         <span class="input-label">Lugar</span>
                         <input type="text" placeholder="Nombre de la cancha, establecimiento, estadio.." ng-model="event.location" ng-required="true">
                     </label>
-                    <div class="item" ng-click="openModal()">
+                    <div class="item" ng-click="openModal()" ng-if="!event.seleccionarCancha">
                         <span>Dirección</span>
                         <span class="pull-right input-text-button" ng-if="!event.address">Ver mapa <i class="fa fa-map-o fa-fw orange"></i></span>
                         <span class="pull-right input-text-button" ng-if="event.address">Registrada <i class="fa fa-map-pin fa-fw orange"></i></span>
-                    </div>
+                    </div-->
+                    
                     <label class="item item-input item-select">
                         <div class="input-label">
                             Habilidad

@@ -4,15 +4,16 @@ angular.module('laReta', [
     'ngCordova',
     'laReta.controllers',
     'laReta.services',
+    'laReta.paypalServices',
     'laReta.filters',
     'uiGmapgoogle-maps',
     'google.places',
     'ngIOS9UIWebViewPatch'
 ])
-    
-    .run(function($http, $ionicPlatform, authService, $rootScope, $state, $ionicHistory, 
-                  jsonUtility, $cordovaNetwork, $ionicModal, $cordovaGeolocation, 
-                  $cordovaPushV5, $localStorage, $ionicLoading, $ionicPopup, 
+
+    .run(function($http, $ionicPlatform, authService, $rootScope, $state, $ionicHistory,
+                  jsonUtility, $cordovaNetwork, $ionicModal, $cordovaGeolocation,
+                  $cordovaPushV5, $localStorage, $ionicLoading, $ionicPopup,
                   $cordovaToast, $location) {
 
 
@@ -45,7 +46,7 @@ angular.module('laReta', [
                 template: text
             });
         };
-        
+
         // Force Logout
         $rootScope.forceLogout = function () {
             authService.setUser({});
@@ -55,7 +56,7 @@ angular.module('laReta', [
             $ionicHistory.clearHistory();
             $ionicHistory.clearCache();
         };
-        
+
         // Privacy Modal Definition
         $ionicModal.fromTemplateUrl('templates/privacy-modal.html', {
             scope: $rootScope,
@@ -556,16 +557,22 @@ angular.module('laReta', [
                    $rootScope.lat  = position.coords.latitude;
                    $rootScope.lng = position.coords.longitude;
                    console.log("Entro a geolocalizacion");
+                   if($rootScope.lat == "undefined") {
+                       $rootScope.lat = 25.67702;
+                       $rootScope.lng = -100.30890;
+                   }
                }, function(err) {
                    // console.info('Returned a Geo error');
                });
                 // End GeoLocation
-           },false); 
+
+
+           },false);
 
             // Initialize Facebook ID and Token
             $rootScope.facebookId = false;
             $rootScope.facebookToken = false;
-            
+
             // Identify platform
             $rootScope.isWebView = ionic.Platform.isWebView();
             $rootScope.isAndroid = ionic.Platform.isAndroid();
@@ -610,7 +617,7 @@ angular.module('laReta', [
                         console.log("Registro Device Token: " + JSON.stringify(registrationId));
                     })
                 });
-                
+
                 $rootScope.eventIdActual = 0;
 
                 // triggered every time notification received
@@ -627,7 +634,7 @@ angular.module('laReta', [
                     var path = $location.path();
                     var sPath = "";
                     if (data.message) {
-                        if(action == "eventCreate" || action == "eventFull" 
+                        if(action == "eventCreate" || action == "eventFull"
                                 || action == "eventReminder" || action == "eventCancel"
                                 || action == "participantCancel"){
                                 sPath = "/app/event/view/" + eventId;
@@ -646,7 +653,7 @@ angular.module('laReta', [
                             if(path != sPath){
                                 $state.go('app.event-participants', { 'eventId': eventId });
                             }else{
-                               console.log("Entrando nuevamente: " + sPath); 
+                               console.log("Entrando nuevamente: " + sPath);
                                $state.transitionTo($state.current, { 'eventId': eventId }, {
                                         reload: true,
                                         inherit: false,
@@ -668,7 +675,7 @@ angular.module('laReta', [
                                    });
                             }
                         }
-                        
+
                         $cordovaToast.show(data.message, 'long', 'bottom')
                                                 .then(function(success) {
                                                   // success
@@ -734,7 +741,7 @@ angular.module('laReta', [
     $cordovaFacebookProvider) {
         // Handle HTTP errors.
         $httpProvider.interceptors.push('responseObserver');
-        
+
         /*
         // Disable JS Scrolling & use native scrolling
         //if(!ionic.Platform.isIOS())$ionicConfigProvider.scrolling.jsScrolling(false);
@@ -766,7 +773,7 @@ angular.module('laReta', [
             $cordovaFacebookProvider.browserInit(appID, version);
             //c0c8b37d325e2b2768f944f38056edc7
         }
-        
+
         $stateProvider
 
             .state('app', {
@@ -805,7 +812,7 @@ angular.module('laReta', [
                     requireLogin: false
                 }
             })
-            
+
             .state('app.contact', {
                 url: '/contact',
                 views: {
@@ -1004,11 +1011,31 @@ angular.module('laReta', [
 
             .state('app.canchas', {
                 url: '/canchas',
+                cache: false,
                 views: {
                     'menuContent': {
                         templateUrl: 'templates/canchas.html',
                         controller: 'CanchasCtrl'
                     }
+                },
+                params : {
+                    seleccionar : false
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+            .state('app.seleccionar-cancha', {
+                url: '/seleccionar/cancha',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/canchas.html',
+                        controller: 'CanchasCtrl'
+                    }
+                },
+                params : {
+                    seleccionar : true
                 },
                 data: {
                     requireLogin: true
@@ -1017,6 +1044,7 @@ angular.module('laReta', [
 
             .state('app.cancha', {
                 url: '/canchas/:canchaId',
+                cache: false,
                 views: {
                     'menuContent': {
                         templateUrl: 'templates/cancha.html',
@@ -1028,8 +1056,40 @@ angular.module('laReta', [
                 }
             })
 
+            .state('app.cancha-new', {
+                url: '/canchas/new',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/formCancha.html',
+                        controller: 'CanchaNewCtrl'
+                    }
+                },
+                params : {
+                    canchaId : 0
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
+            .state('app.cancha-edit', {
+                url: '/canchas/edit/:canchaId',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/formCancha.html',
+                        controller: 'CanchaNewCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
             .state('app.cancha-calendario', {
-                url: '/calendario/:canchaId',
+                url: '/calendario/:canchaId/:month/:year',
+                cache: false,
                 views: {
                     'menuContent': {
                         templateUrl: 'templates/calendario.html',

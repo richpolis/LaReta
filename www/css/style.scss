@@ -605,6 +605,20 @@ ion-side-menu .scroll-content {
   .chevron {
     @extend .vcenter;
   }
+
+  /* para los calendarios de canchas */
+  .calendario-horario-no-disponible{
+    background-color: gray;
+  }
+
+  .calendario-horario-disponible{
+    background-color: white;
+  }
+
+  .calendario-horario-ocupado{
+    background-color: greenyellow;
+  }
+
 }
 
 .event-list-item-attending {
@@ -965,3 +979,4 @@ div.pac-container {
   position: absolute;
   z-index: 10000;
 }
+

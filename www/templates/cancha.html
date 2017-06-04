@@ -1,19 +1,18 @@
-<!-- View single event -->
 <ion-view view-title="Ver Cancha">
     <ion-content>
         <div class="titlebox">
             <div class="event-name inline truncate vcenter">
-                <strong>{{ cancha.name }}:</strong> 
+                <strong>{{ cancha.name }}</strong>
             </div>
         </div>
 
-        <div class="event-description" ng-if="cancha.description">
+        <div class="event-description">
             <div class="icon"><i class="fa fa-commenting-o fa-fw"></i></div>
             {{ cancha.description }}
         </div>
 
-        <div class="event-description" ng-if="cancha.image">
-            <img src="cancha.image" />
+        <div class="event-description" ng-if="cancha.image" style="text-align: center;">
+            <img src="{{cancha.image}}" />
         </div>
 
         <div id="event-map">
@@ -23,19 +22,19 @@
         </div>
 
         <div class="event-details">
-            <table>
+            <table style="width: 100%;">
                 <tbody>
                 <tr>
                     <th>Abierto</th>
-                    <td>{{ cancha.hora_inicio }}</td>
+                    <td>{{ cancha.hora_inicio | date : 'h:mm a' }}</td>
                 </tr>
                 <tr>
                     <th>Cierra</th>
-                    <td>{{ cancha.hora_fin }}</td>
+                    <td>{{ cancha.hora_fin | date : 'h:mm a'  }}</td>
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <table>
+                    <td colspan="2" style="width: 100%;">
+                        <table style="width: 100%;">
                             <tr>
                                 <th colspan="7">Dias Disponibles</th>
                             </tr>
@@ -61,12 +60,15 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Precio</th>
-                    <td>{{ cancha.precio }}</td>
+                    <th>Precio por hora</th>
+                    <td>{{ cancha.precio | currency : '$' }} por hora</td>
                 </tr>
                 <tr>
                     <th>Publica</th>
-                    <td><i class="fa fa-check fa-fw" ng-if="cancha.is_public"></i></td>
+                    <td>
+                        <i class="fa fa-check fa-fw" ng-if="cancha.is_public"></i>
+                        <span ng-if="!cancha.is_public">De Pago</span>
+                    </td>
                 </tr>
                 <tr>
                     <th>Tipo de pago</th>
@@ -80,14 +82,22 @@
                 </tr>
                 <tr>
                     <th>Administrador</th>
-                    <td>{{ cancha.administrador.name }}</td>
+                    <td>{{ cancha.administrador.fullName }}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="actions">
-            <button class="button button-block button-positive" type="button" ng-click="editarCancha()"><i class="fa fa-user-plus fa-fw"></i> Unirse</button>
+            <button class="button button-block button-positive" type="button" ng-click="gotoEditCancha()">
+                <i class="fa fa-pencil fa-fw"></i> Editar
+            </button>
+            <button class="button button-block button-calm" type="button" ng-click="gotoReservaciones()">
+                <i class="fa fa-eye fa-fw"></i> Reservaciones
+            </button>
+            <button class="button button-block button-assertive" type="button" ng-click="deleteCancha()">
+                <i class="fa fa-trash fa-fw"></i> Eliminar
+            </button>
         </div>
     </ion-content>
 </ion-view>

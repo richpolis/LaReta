@@ -1,16 +1,25 @@
 <ion-view view-title="Canchas">
     <ion-content>
-        <ion-list class="event-list">
+        <div class="user-event-header">
+            Mis canchas o lugares
+        </div>
 
-            <ion-item class="event-list-item" ng-repeat="cancha in canchas" href="#/app/canchas/{{cancha.id}}">
-                <div class="row">
+        <div ng-if="miscanchas.length == 0" class="user-no-events">
+        <p>No tienes canchas o lugares registrados.</p>
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-list-item event-list-item-attending" ng-repeat="cancha in miscanchas">
+                <div class="row" ng-click="gotoCancha(cancha.id)">
                     <div class="col-75">
-                        <div class="location">
-                            {{cancha.name}}
-                        </div>
-                        <div class="details">
+                        <span class="location">
+                            {{ cancha.name }}
+                        </span>
+                        <br>
+                        <span class="details">
                             <span ng-if="cancha.distance != null"> | <i class="fa fa-map-marker"></i> {{ cancha.distance }} km</span>
-                        </div>
+                        </span>
                     </div>
                     <div class="time col vcenter">
                         
@@ -19,33 +28,68 @@
                         <i class="fa fa-chevron-right"></i>
                     </div>
                 </div>
-            </ion-item>
+            </div>
 
-        </ion-list>
+        </div>
 
-        <div class="event-footer-spacer" ng-if="events.length >  0"></div>
+        <div class="event-footer-spacer" ng-if="canchas.length >  0"></div>
+
+        <div class="user-event-header" ng-if="event.seleccionarCancha">
+            Canchas Privadas
+        </div>
+
+        <div ng-if="past.length == 0" class="user-no-events" ng-if="event.seleccionarCancha">
+            <p>No hay canchas privadas para jugar</p>
+        </div>
+
+        <div class="event-list" ng-if="event.seleccionarCancha">
+
+            <div class="event-list-item event-list-item-attending" ng-repeat="cancha in canchas">
+                <div class="row" ng-click="gotoCancha(cancha.id)">
+                    <div class="col-75">
+                        <span class="location">
+                            {{ cancha.name }}
+                        </span>
+                        <br>
+                        <span class="details">
+                            <span ng-if="cancha.distance != null"> | <i class="fa fa-map-marker"></i> {{ cancha.distance }} km</span>
+                        </span>
+                    </div>
+                    <div class="time col vcenter">
+                        
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="event-footer-spacer" ng-if="canchas.length >  0"></div>
+
+        <div class="padding center" ng-if="!event.seleccionarCancha">
+            <button class="button button-block button-primary-skew" ng-click="gotoReservaciones()">Ver reservaciones</button>
+        </div>
 
         <div class="padding center">
-            <p class="muted" ng-if="canchas.length ==  0">No se encontraron canchas.</p>
-            <button class="button button-block button-primary-skew" ng-click="goToCreateCancha()">Registra tu cancha</button>
+            <button class="button button-block button-primary-skew" ng-click="gotoNewCancha()">Registra tu cancha</button>
         </div>
+       
 
     </ion-content>
 </ion-view>
 
-<script id="location-modal.html" type="text/ng-template">
+<script id="cancha-location-modal.html" type="text/ng-template">
     <ion-modal-view>
-        <ion-header-bar>
-            <h1 class="title">Fijar ubicación!</h1>
-        </ion-header-bar>
         <ion-content>
             <div class="bar bar-header item-input-inset">
                 <label class="item-input-wrapper">
                     <i class="icon ion-ios-search placeholder-icon"></i>
-                    <input type="text" placeholder="Dirección" ng-model="event.direction" g-places-autocomplete>
+                    <input type="text" placeholder="Dirección" ng-model="canchaData.direction" g-places-autocomplete options="autocompleteOptions">
                 </label>
-                <button class="button button-clear" type="button" ng-click="event.direction = null">
-                    X
+                <button class="button button-clear button-small vcenter" type="button" ng-click="canchaData.direction = null">
+                    <i class="fa fa-times fa-fw"></i>
                 </button>
             </div>
 
@@ -53,6 +97,29 @@
                 <ui-gmap-google-map center='map.center' zoom='map.zoom' options='map.options'>
                     <ui-gmap-marker coords="marker.coords" idkey="marker.id"></ui-gmap-marker>
                 </ui-gmap-google-map>
+            </div>
+
+            <div class="new-event-instructions">
+                <p>
+                    <strong>¿Cómo fijar la dirección?</strong><br>
+                <ol class="show-list-numbers">
+                    <li>Introduce la dirección o nombre de la cancha en la barra superior.</li>
+                    <li>Si es necesario, ajusta la ubicación arrastrando el marcardor en el mapa hacia la posición exacta de la cancha.</li>
+                </ol>
+                </p>
+            </div>
+
+            <div class="padding">
+                <div class="row">
+                    <div class="col"><button class="button button-block button-positive button-no-bar" type="button" ng-click="closeModal()" ng-disabled="!canchaData.address">Fijar Ubicación</button></div>
+                </div>
+                <div class="row">
+                    <div class="col"><button class="button button-block button-positive button-no-bar" type="button" ng-click="centerOnMe()">Mi ubicacion</button></div>
+                </div>
+            </div>
+
+            <div class="padding center">
+                <p class="underline" ng-click="closeModal()">Cerrar</p>
             </div>
         </ion-content>
     </ion-modal-view>
