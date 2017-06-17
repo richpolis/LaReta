@@ -149,8 +149,8 @@ angular.module('laReta.services', [])
         };
 
         //  Reservaciones List <CalendarioCancha>
-        this.listReservacionesForAdmin = function (data) {
-            return this.executeRequest('/calendario/canchas/list/admin', data);
+        this.listReservacionesForUser = function (data) {
+            return this.executeRequest('/calendario/canchas/list/user', data);
         };
 
         //  Reservaciones List <CalendarioCancha>

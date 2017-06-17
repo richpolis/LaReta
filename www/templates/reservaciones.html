@@ -1,0 +1,25 @@
+<ion-view view-title="Mis reservaciones">
+    <ion-content>
+        <ion-list class="event-list">
+            <ion-item class="event-list-item" ng-repeat="reservacion in reservaciones" ng-click="showReservacion(reservacion)">
+                <div class="row">
+                    <div class="col-75">
+                        <div class="location">
+                            {{reservacion.usuario.fullName}}
+                        </div>
+                        <div class="details">
+                            <span ng-if="reservacion.fecha != null"> | <i class="fa fa-map-marker"></i> {{ reservacion.fecha }}</span>
+                        </div>
+                    </div>
+                    <div class="time col vcenter">
+                        {{ reservacion.hora_inicio }} - {{ reservacion.hora_fin }}
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </ion-item>
+
+        </ion-list>
+    </ion-content>
+</ion-view>

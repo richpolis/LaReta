@@ -1,6 +1,6 @@
 <ion-view view-title="Canchas">
     <ion-content>
-        <div class="user-event-header">
+        <div class="sport-separator">
             Mis canchas o lugares
         </div>
 
@@ -34,7 +34,7 @@
 
         <div class="event-footer-spacer" ng-if="canchas.length >  0"></div>
 
-        <div class="user-event-header" ng-if="event.seleccionarCancha">
+        <div class="sport-separator" ng-if="event.seleccionarCancha">
             Canchas Privadas
         </div>
 
@@ -68,11 +68,8 @@
 
         <div class="event-footer-spacer" ng-if="canchas.length >  0"></div>
 
-        <div class="padding center" ng-if="!event.seleccionarCancha">
-            <button class="button button-block button-primary-skew" ng-click="gotoReservaciones()">Ver reservaciones</button>
-        </div>
-
         <div class="padding center">
+            <button class="button button-block button-primary-skew"  ng-if="!event.seleccionarCancha" ng-click="gotoMisReservaciones()">Ver reservaciones</button>
             <button class="button button-block button-primary-skew" ng-click="gotoNewCancha()">Registra tu cancha</button>
         </div>
        

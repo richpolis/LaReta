@@ -1101,6 +1101,20 @@ angular.module('laReta', [
                 }
             })
 
+            .state('app.reservaciones', {
+                url: '/reservaciones/:usuarioId/:month/:year',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/reservaciones.html',
+                        controller: 'ReservacionesCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
             .state('app.logout', {
                 url: '/logout',
                 views: {

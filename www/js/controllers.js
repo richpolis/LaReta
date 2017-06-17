@@ -619,7 +619,7 @@ angular.module('laReta.controllers', [])
         var promise = apiHandler.viewUser();
 
         promise.then(function (response) {
-            debugger;
+            //debugger;
             console.log(response);
 
             if (response.error != 0) {
@@ -1016,8 +1016,11 @@ angular.module('laReta.controllers', [])
             var fecha = new Date();
             var hoy = new Date();
 
-            $scope.event.latitude = $scope.map.center.latitude;
-            $scope.event.longitude = $scope.map.center.longitude;
+            /*
+                Esto pasa al manejador de canchas
+                $scope.event.latitude = $scope.map.center.latitude;
+                $scope.event.longitude = $scope.map.center.longitude;
+            */
 
             fecha.setFullYear($scope.event.date.getFullYear(),$scope.event.date.getMonth(),$scope.event.date.getDate());
             fecha.setHours($scope.event.time.getHours());
@@ -1448,6 +1451,16 @@ angular.module('laReta.controllers', [])
         $scope.gotoCancha = function(canchaId){
             $state.go('app.cancha', {'canchaId': canchaId});
         }
+
+        $scope.gotoMisReservaciones = function(){
+            var fecha = new Date();
+            //debugger;
+            $state.go('app.reservaciones', {
+                'usuarioId': user.id, 
+                'month': fecha.getMonth() + 1,
+                'year': fecha.getFullYear()  
+            });
+        };
 
 
         // Si es seleccionar canchas, mostrar el arreglo seleccionar canchas privadas.
@@ -2077,223 +2090,73 @@ angular.module('laReta.controllers', [])
 
     })
     .controller('ReservacionesCtrl', function($rootScope, $scope, $stateParams, apiHandler, $state, $ionicModal,
-                                            dateUtility, $localStorage, PaypalService, $ionicPopup) {
+                                              dateUtility, $localStorage, PaypalService, $ionicPopup) {
 
-        $scope.event = $localStorage.get("new_event", { seleccionarCancha: false } ,true);
         $scope.user = $localStorage.get('user', {}, true);
 
         var usuarioId    = $scope.user.id;
         var mes         = $stateParams["month"];
         var year        = $stateParams["year"];
-        var day         = $stateParams["day"] || $scope.event.date.getDay(); 
-        var fecha =     { 'month': mes, 'year': year , 'day': day};
+        var fecha =     { 'month': mes, 'year': year };
 
-        $scope.minDate = new Date(year, mes, day, 0, 0, 0, 0);
+        $scope.minDate = new Date(year, mes, 1, 0, 0, 0, 0);
         $scope.isIOS = $rootScope.isIOS;
 
-        $scope.horas = [];
-        for(var i=$scope.cancha.hora_inicio.getHours(); i<$scope.cancha.hora_fin.getHours();i++){
-            $scope.horas.push({hora: i, texto: ((i>10)?i:'0'+i) + ((i>=12)?'pm':'am')})
-        }
-
-        $scope.canchaId = canchaId;
-
-        $scope.goToFecha = function(obj){        
-            obj.canchaId = canchaId;
+        $scope.goToFecha = function(obj){
+            obj.usuarioId = usuarioId;
             $rootScope.showLoader(true);
-            var promise = apiHandler.listReservacionesForCancha(obj);
+            var promise = apiHandler.listReservacionesForUser(obj);
             promise.then(function (result) {
+                console.log(result);
                 $rootScope.showLoader(false);
                 if (result.error != 0) {
                     $rootScope.error(
                         $rootScope.getErrorDescription(result.error)
                     );
                 } else {
-                    //$scope.reservaciones = result.data;
-                    var reservaciones = [];
-                    var dataReservaciones = result.data;
-
-                    // crea la pizarra para seleccionar los horarios
-                    for(var cont=0; cont<24;cont){
-                        reservaciones.push({
-                            className: 'calendario-horario-no-disponible', 
-                            text: '', 
-                            abierto: false,
-                            horario: ((cont>10)?cont:'0'+cont) + ((cont>=12)?'pm':'am'),
-                            hora: cont
-                        })
-                    }
-
-                    // marca los horarios que si esta abierta la cancha
-                    for(cont=$scope.cancha.hora_inicio.getHours(); cont<=$scope.cancha.hora_fin.getHours(); cont++){
-                        reservaciones[cont].className='calendario-horario-disponible';
-                        reservaciones[cont].text = 'Disponible'
-                        reservaciones[cont].abierto = true
-                    }
-
-                    var hi = 0; // hora que inicia
-                    var ht = 0; // hora que termina
-                    for(cont=0; cont<dataReservaciones.length; cont++){
-                        hi = dataReservaciones[cont].hora_inicio.getHours()
-                        ht = dataReservaciones[cont].hora_fin.getHours()
-                        reservaciones[hi].className='calendario-horario-ocupado';
-                        reservaciones[hi].text = 'Ocupado ' +  ((hi>10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((hi>10)?hi:'0'+hi) + ((hi>=12)?'pm':'am'),
-                        reservaciones[hi].data = dataReservaciones[cont];
-                    }
-
-                    $scope.reservaciones = reservaciones;
-
+                    $scope.reservaciones = result.data;
                 }
             });
         };
 
         $scope.goToFecha(fecha);
 
-        // Creamos un modal para crear canchas del usuario
-        $ionicModal.fromTemplateUrl('templates/calendarioFormModal.html', {
-            scope: $scope
-        }).then(function (modalForm) {
-            $scope.calendarioFormModal = modalForm;
-        });
-
-        $scope.calendarioData = {
-            id: 0,
-            fecha: $scope.minDate,
-            hora_inicio: null,
-            hora_fin: null
-        };
-
-        $scope.seleccionarHorario = function(hora, data){
-            data = data || {};
-            if(data.usuario && data.usuario.id){
-                // Custom popup
-                var alertPopup = $ionicPopup.alert({
-                    title: 'Reservacion',
-                    template: data.usuario.fullName
-                });
-
-                alertPopup.then(function(res) {
-                    // Ninguna funcionalidad adicional por el momento
-                });
-            }else{
-                $scope.calendarioData.hora_inicio = hora;
-                $scope.calendarioData.hora_fin = hora + 1;
-            }
-        }
-
-        // Accion para cerrar el formCalendarioCancha
-        $scope.closeCalendarioCanchaForm = function () {
-            $scope.calendarioFormModal.hide();
-        };
-
-        // Accion para mostrar el formCalendarioCancha
-        $scope.showCalendarioCanchaForm = function () {
-            $scope.calendarioFormModal.show();
-        };
-
-        // Accion para crear la cancha
-        $scope.doCrearReservacion = function () {
-
-            var calendarioData = $scope.calendarioData;
-            var fecha = $scope.calendarioData.fecha;
-            var horaInicio = $scope.calendarioData.hora_inicio;
-            var horaFin = $scope.calendarioData.hora_fin;
-
-            calendarioData.fecha = dateUtility.getStringFromDateTime(fecha);
-            calendarioData.hora_inicio = "2017-01-01 " + horaInicio + ":00:00";
-            calendarioData.hora_fin = "2017-01-01 " + horaFin + ":00:00";
-            calendarioData.usuarioId = user.id;
-            calendarioData.canchaId = canchaId;
-            calendarioData.is_pay = false;
-
-            var promise = apiHandler.newReservacion(calendarioData);
-
-            promise.then(function (response) {
-                console.log("Response:");
-                console.log(response);
-
-                if (response.error != 0) {
-                    // TODO: throw popup
-                    $rootScope.error('Ocurrió un error en la operación.');
-                } else {
-                    $scope.closeCalendarioCanchaForm();
-                    if($scope.event.seleccionarCancha){
-                        $scope.event.calendario_cancha = response.data.id;
-                        $scope.event.seleccionarCancha = false;
-                        $localStorage.set("new_event", $scope.event, true);
-                        $state.go('app.event-new');
-                    }
-                }
-            });
-
-        };
-
         $scope.realizarPago = function(){
-          if($scope.calendarioData.hora_inicio >= $scope.calendarioData.hora_fin){
-            // Custom popup
-            var alertPopup = $ionicPopup.alert({
-                title: 'Reservacion',
-                template: 'Los horarios no concuerdan'
-            });
+            // calculamos las horas que es el juego
+            var horas = $scope.reservacion.hora_fin - $scope.reservacion.hora_inicio;
+            // calculamos el precio y lo formateamos en dos decimales
+            var precio = parseFloat(Math.round(($scope.reservacion.precio * horas) * 100) / 100).toFixed(2);
 
-            alertPopup.then(function(res) {
-                return false;
-            });
-          }else{
-              // calculamos las horas que es el juego
-              var horas = $scope.calendarioData.hora_fin - $scope.calendarioData.hora_inicio;
-              // calculamos el precio y lo formateamos en dos decimales
-              var precio = parseFloat(Math.round(($scope.cancha.precio * horas) * 100) / 100).toFixed(2);
-          }  
-
-          PaypalService.initPaymentUI().then(function () {
-              // hacemos el pago
-              PaypalService.makePayment("" + precio, "Total").then(function(payment){
-                $scope.event.payment = payment;
-                $scope.calendarioData.is_pay = true;
-                $localStorage.set("new_event", $scope.event, true);
-                $scope.doCrearReservacion();
-              },function(err){
-                console.log("Error " +  err);
-              });
-          });
-        }
-
-        $scope.showDatePicker = function(){
-            console.log($scope.calendarioData.fecha);
-            var options = {
-                date: $scope.calendarioData.fecha || new Date(),
-                mode: 'date', // or 'time'
-                minDate: new Date() - 10000,
-                allowOldDates: false,
-                allowFutureDates: true,
-                doneButtonLabel: 'DONE',
-                doneButtonColor: '#F2F3F4',
-                cancelButtonLabel: 'CANCEL',
-                cancelButtonColor: '#000000'
-              };
-
-              document.addEventListener("deviceready", function () {
-
-                $cordovaDatePicker.show(options).then(function(date){
-                    $scope.calendarioData.fecha = date;
-                    $scope.calendarioData.fecha_string =  dateUtility.getStringFromDate($scope.calendarioData.fecha);
+            PaypalService.initPaymentUI().then(function () {
+                // hacemos el pago
+                PaypalService.makePayment("" + precio, "Total").then(function(payment){
+                    $scope.reservacion.payment = payment;
+                    $scope.reservacion.is_pay = true;
+                },function(err){
+                    console.log("Error " +  err);
                 });
-
-              }, false);
+            });
         };
 
         
 
-        // Detect places
-        $scope.$watch("calendarioData.hora_inicio", function(newValue, oldValue) {
-            if(newValue == null){
-                return;
-            }
-            if($scope.calendarioData.hora_fin == null || $scope.calendarioData.id == 0){
-                $scope.calendarioData.hora_fin = $scope.calendarioData.hora_inicio + 1;
-            }
-        });
+        $scope.showReservacion = function(reservacion){
+            $scope.reservacion = reservacion;
+            // An elaborate, custom popup
+            var myPopup = $ionicPopup.show({
+                templateUrl: 'templates/reservacionModal.html',
+                title: 'Mostrar mi Reservacion',
+                scope: $scope,
+                buttons: [
+                  { text: 'Cerrar' },
+                ]
+              });
+
+              myPopup.then(function(res) {
+                console.log('Tapped!', res);
+              });
+
+        }
 
     })
 ;

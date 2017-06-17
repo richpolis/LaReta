@@ -1,5 +1,8 @@
 {
   "name": "La Reta",
   "app_id": "0781087c",
-  "type": "ionic1"
+  "type": "ionic1",
+  "watchPatterns": [
+    "scss/**/*"
+  ]
 }
