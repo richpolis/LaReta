@@ -1088,7 +1088,7 @@ angular.module('laReta', [
             })
 
             .state('app.cancha-calendario', {
-                url: '/calendario/:canchaId/:month/:year',
+                url: '/calendario/:canchaId/:day/:month/:year',
                 cache: false,
                 views: {
                     'menuContent': {

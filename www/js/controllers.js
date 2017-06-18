@@ -1537,11 +1537,15 @@ angular.module('laReta.controllers', [])
 
         $scope.gotoReservaciones = function(){
             var now = new Date();
+            var day = now.getDate(), month = now.getMonth()+1, year=now.getFullYear();
+            
             $localStorage.set('cancha', $scope.cancha, true);
+
             $state.go('app.cancha-calendario', {
                 'canchaId': $scope.cancha.id,
-                'month': now.getMonth() + 1,
-                'year':now.getFullYear()
+                'day': day,
+                'month': month,
+                'year': year
             });
         };
 
@@ -1879,17 +1883,22 @@ angular.module('laReta.controllers', [])
 
         var canchaId    = $stateParams["canchaId"];
         var user        = $localStorage.get('user',{}, true);
-        var mes         = $stateParams["month"];
+        var month       = $stateParams["month"];
         var year        = $stateParams["year"];
-        var day         = $stateParams["day"] || $scope.event.date.getDay(); 
-        var fecha =     { 'month': mes, 'year': year , 'day': day};
+        var day         = $stateParams["day"] || $scope.event.fecha.getDate(); 
+        var fecha =     { 'day': day, 'month': month , 'year': year};
 
-        $scope.minDate = new Date(year, mes, day, 0, 0, 0, 0);
+        
+        $scope.minDate = new Date(year, month, day, 0, 0, 0, 0);
         $scope.isIOS = $rootScope.isIOS;
 
         $scope.horas = [];
-        for(var i=$scope.cancha.hora_inicio.getHours(); i<$scope.cancha.hora_fin.getHours();i++){
-            $scope.horas.push({hora: i, texto: ((i>10)?i:'0'+i) + ((i>=12)?'pm':'am')})
+        var horaInicioCancha = new Date($scope.cancha.hora_inicio); 
+        var horaFinCancha = new Date($scope.cancha.hora_fin);
+        var i=0;
+        
+        for(i=horaInicioCancha.getHours(); i<horaFinCancha.getHours();i++){
+            $scope.horas.push({hora: i, texto: ((i>=10)?i:'0'+i) + ((i>=12)?'pm':'am')})
         }
 
         $scope.canchaId = canchaId;
@@ -1908,20 +1917,21 @@ angular.module('laReta.controllers', [])
                     //$scope.reservaciones = result.data;
                     var reservaciones = [];
                     var dataReservaciones = result.data;
+                    var cont = 0;
 
                     // crea la pizarra para seleccionar los horarios
-                    for(var cont=0; cont<24;cont){
+                    for(cont = 0; cont < 24; cont++){
                         reservaciones.push({
                             className: 'calendario-horario-no-disponible', 
                             text: '', 
                             abierto: false,
-                            horario: ((cont>10)?cont:'0'+cont) + ((cont>=12)?'pm':'am'),
+                            horario: ((cont>=10)?cont:'0'+cont) + ((cont>=12)?'pm':'am'),
                             hora: cont
                         })
                     }
 
                     // marca los horarios que si esta abierta la cancha
-                    for(cont=$scope.cancha.hora_inicio.getHours(); cont<=$scope.cancha.hora_fin.getHours(); cont++){
+                    for(cont=horaInicioCancha.getHours(); cont<=horaFinCancha.getHours(); cont++){
                         reservaciones[cont].className='calendario-horario-disponible';
                         reservaciones[cont].text = 'Disponible'
                         reservaciones[cont].abierto = true
@@ -1933,7 +1943,7 @@ angular.module('laReta.controllers', [])
                         hi = dataReservaciones[cont].hora_inicio.getHours()
                         ht = dataReservaciones[cont].hora_fin.getHours()
                         reservaciones[hi].className='calendario-horario-ocupado';
-                        reservaciones[hi].text = 'Ocupado ' +  ((hi>10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((hi>10)?hi:'0'+hi) + ((hi>=12)?'pm':'am'),
+                        reservaciones[hi].text = 'Ocupado ' +  ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am'),
                         reservaciones[hi].data = dataReservaciones[cont];
                     }
 
@@ -1955,6 +1965,7 @@ angular.module('laReta.controllers', [])
         $scope.calendarioData = {
             id: 0,
             fecha: $scope.minDate,
+            fecha_string: dateUtility.getStringFromDate($scope.minDate),
             hora_inicio: null,
             hora_fin: null
         };
@@ -1974,6 +1985,7 @@ angular.module('laReta.controllers', [])
             }else{
                 $scope.calendarioData.hora_inicio = hora;
                 $scope.calendarioData.hora_fin = hora + 1;
+                $scope.showCalendarioCanchaForm();
             }
         }
 

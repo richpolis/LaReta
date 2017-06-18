@@ -8,8 +8,10 @@
                 <input type="time" ng-if="isIOS" placeholder="Fecha" ng-model="calendarioData.fecha" 
                 ng-required="true"  ng-change="goToFecha(calendarioData.fecha)">
             </label>
-            <ion-item class="event-list-item {{ reservacion.className }}" ng-repeat="reservacion in reservaciones" 
-            ng-show="reservacion.abierto" ng-click="seleccionarHorario(reservacion.hora, reservacion.data)">
+            <ion-item ng-repeat="reservacion in reservaciones" 
+            class=" event-list-item" 
+            ng-show="reservacion.abierto" 
+            ng-click="seleccionarHorario(reservacion.hora, reservacion.data)">
                 <div class="row">
                     <div class="col-75">
                         <div class="location" ng-if="reservacion">

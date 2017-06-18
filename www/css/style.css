@@ -397,7 +397,8 @@ ion-side-menu .scroll-content {
 .event-list-item, .event-participant, .message-list-item {
   box-shadow: none !important;
   padding: 10px;
-  margin: 5px 15px; }
+  margin: 5px 15px;
+  /* para los calendarios de canchas */ }
   .event-list-item:first-child, .event-participant:first-child, .message-list-item:first-child {
     margin-top: 20px; }
   .event-list-item .location, .event-participant .location, .message-list-item .location {
@@ -425,6 +426,12 @@ ion-side-menu .scroll-content {
       letter-spacing: 0.05em;
       font-style: normal;
       font-size: 10px; }
+  .event-list-item .calendario-horario-no-disponible, .event-participant .calendario-horario-no-disponible, .message-list-item .calendario-horario-no-disponible {
+    background-color: gray; }
+  .event-list-item .calendario-horario-disponible, .event-participant .calendario-horario-disponible, .message-list-item .calendario-horario-disponible {
+    background-color: white; }
+  .event-list-item .calendario-horario-ocupado, .event-participant .calendario-horario-ocupado, .message-list-item .calendario-horario-ocupado {
+    background-color: greenyellow; }
 
 /* SCREEN: EVENT */
 .event-name {
