@@ -1537,7 +1537,7 @@ angular.module('laReta.controllers', [])
 
         $scope.gotoReservaciones = function(){
             var now = new Date();
-            var day = now.getDate(), month = now.getMonth()+1, year=now.getFullYear();
+            var day = now.getDate(), month = now.getMonth(), year=now.getFullYear();
             
             $localStorage.set('cancha', $scope.cancha, true);
 
@@ -1903,7 +1903,10 @@ angular.module('laReta.controllers', [])
 
         $scope.canchaId = canchaId;
 
-        $scope.goToFecha = function(obj){        
+        $scope.goToFecha = function(obj){
+            debugger;
+            obj = obj || $scope.calendarioData.fecha;
+            alert(JSON.stringify(obj));
             obj.canchaId = canchaId;
             $rootScope.showLoader(true);
             var promise = apiHandler.listReservacionesForCancha(obj);
@@ -1915,6 +1918,8 @@ angular.module('laReta.controllers', [])
                     );
                 } else {
                     //$scope.reservaciones = result.data;
+
+                    debugger;
                     var reservaciones = [];
                     var dataReservaciones = result.data;
                     var cont = 0;
@@ -1940,8 +1945,10 @@ angular.module('laReta.controllers', [])
                     var hi = 0; // hora que inicia
                     var ht = 0; // hora que termina
                     for(cont=0; cont<dataReservaciones.length; cont++){
-                        hi = dataReservaciones[cont].hora_inicio.getHours()
-                        ht = dataReservaciones[cont].hora_fin.getHours()
+                        var fechaHi = new Date("2015-03-25T" + dataReservaciones[cont].hora_inicio + "Z");
+                        var fechaHt = new Date("2015-03-25T" + dataReservaciones[cont].hora_fin + "Z");
+                        hi = fechaHi.getHours()
+                        ht = fechaHt.getHours()
                         reservaciones[hi].className='calendario-horario-ocupado';
                         reservaciones[hi].text = 'Ocupado ' +  ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am'),
                         reservaciones[hi].data = dataReservaciones[cont];
@@ -1954,6 +1961,17 @@ angular.module('laReta.controllers', [])
         };
 
         $scope.goToFecha(fecha);
+
+        $scope.goToAfterFecha = function(){
+            var fecha = $scope.calendarioData.fecha;
+            var day = fecha.getDate();
+            var month = fecha.getMonth();
+            var year = fecha.getFullYear();
+
+            var obj =     { 'day': day, 'month': month , 'year': year};
+
+            $scope.goToFecha(obj);
+        };
 
         // Creamos un modal para crear canchas del usuario
         $ionicModal.fromTemplateUrl('templates/calendarioFormModal.html', {

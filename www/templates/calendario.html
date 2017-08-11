@@ -1,17 +1,21 @@
 <ion-view view-title="Canchas">
+    <div class="bar bar-header item-input-inset">
+        <label class="item-input-wrapper">
+            <i class="icon ion-ios-search placeholder-icon"></i>
+            <input type="search" placeholder="Search">
+        </label>
+    </div>
     <ion-content>
         <ion-list class="event-list">
             <label class="item item-input">
                 <span class="input-label">Fecha</span>
-                <input type="text" ng-if="!isIOS" placeholder="Fecha" ng-model="calendarioData.fecha_string" 
-                ng-click="showDatePicker()" ng-change="goToFecha(calendarioData.fecha)">
-                <input type="time" ng-if="isIOS" placeholder="Fecha" ng-model="calendarioData.fecha" 
-                ng-required="true"  ng-change="goToFecha(calendarioData.fecha)">
+                <input type="date" ng-if="!isIOS" placeholder="Fecha" ng-model="calendarioData.fecha"
+                ng-change="goToAfterFecha()">
+                <input type="date" ng-if="isIOS" placeholder="Fecha" ng-model="calendarioData.fecha"
+                ng-required="true"  ng-change="goToAfterFecha()">
             </label>
             <ion-item ng-repeat="reservacion in reservaciones" 
-            class=" event-list-item" 
-            ng-show="reservacion.abierto" 
-            ng-click="seleccionarHorario(reservacion.hora, reservacion.data)">
+            class="event-list-item" ng-show="reservacion.abierto" ng-click="seleccionarHorario(reservacion.hora, reservacion.data)">
                 <div class="row">
                     <div class="col-75">
                         <div class="location" ng-if="reservacion">
@@ -26,35 +30,12 @@
                     </div>
                 </div>
             </ion-item>
-
-            <!--ion-item class="event-list-item" ng-repeat="reservacion in reservaciones">
-                <div class="row">
-                    <div class="col-75">
-                        <div class="location">
-                            {{reservacion.usuario.fullName}}
-                        </div>
-                        <div class="details">
-                            <span ng-if="reservacion.fecha != null"> | <i class="fa fa-map-marker"></i> {{ reservacion.fecha }}</span>
-                        </div>
-                    </div>
-                    <div class="time col vcenter">
-                        {{ reservacion.hora_inicio }} - {{ reservacion.hora_fin }}
-                    </div>
-                    <div class="chevron">
-                        <i class="fa fa-chevron-right"></i>
-                    </div>
-                </div>
-            </ion-item-->
-
         </ion-list>
-
         <div class="event-footer-spacer" ng-if="reservaciones.length >  0"></div>
-
         <div class="padding center">
             <p class="muted" ng-if="reservaciones.length ==  0">No se encontraron reservaciones.</p>
             <button class="button button-block button-primary-skew" ng-click="showCalendarioCanchaForm()">Reservar</button>
             <!--button class="button button-block button-primary-skew" ng-click="paypalTest()">Prueba Paypal Mobile</button-->
         </div>
-
     </ion-content>
 </ion-view>
