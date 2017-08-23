@@ -1064,7 +1064,7 @@ angular.module('laReta.controllers', [])
             }else{
                 
                 $localStorage.set("new_event",$scope.event,true);
-                $state.go("app.seleccionar-cancha");
+                $state.go("app.canchas");
 
             }
 
@@ -1144,6 +1144,11 @@ angular.module('laReta.controllers', [])
                 }
             });
         }
+
+        $scope.$on('update_new_event', function(event, args) {
+            // do what you want to do
+            $scope.event = $localStorage.get("new_event", {} ,true);
+        });
         
 
     })
@@ -1428,19 +1433,35 @@ angular.module('laReta.controllers', [])
         $scope.event = $localStorage.get("new_event", { seleccionarCancha: false } ,true);
         $scope.canchas = [];
 
-        var user = $localStorage.get('user',{}, true);
-        
-        var promise = apiHandler.listCancha(user);
+        $scope.user = $localStorage.get('user',{}, true);
+        var promise = null;
+        if($scope.event.seleccionarCancha) {
+            promise = apiHandler.listCancha($scope.user);
+        }else{
+            promise = apiHandler.listAdminCancha($scope.user);
+        }
+
         promise.then(function (response) {
             console.log("Response:");
-            console.log(response);
+            console.log(JSON.stringify(response.data));
 
             if (response.error != 0) {
                 // TODO: throw popup
                 $rootScope.error('Ocurrió un error en la operación.');
             } else {
-                $scope.miscanchas = response.data;
-                $localStorage.set('canchas',$scope.canchas,true);
+                var canchas = response.data;
+                $scope.miscanchas = [];
+                $scope.canchas = [];
+
+                for(var cont=0; cont<canchas.length; cont++){
+                    if(canchas[cont].administrador.id == $scope.user.id){
+                        $scope.miscanchas.push(canchas[cont]);
+                    }else{
+                        $scope.canchas.push(canchas[cont]);
+                    }
+                }
+
+                $localStorage.set('canchas',canchas,true);
             }
         });
 
@@ -1456,7 +1477,7 @@ angular.module('laReta.controllers', [])
             var fecha = new Date();
             //debugger;
             $state.go('app.reservaciones', {
-                'usuarioId': user.id, 
+                'usuarioId': $scope.user.id,
                 'month': fecha.getMonth() + 1,
                 'year': fecha.getFullYear()  
             });
@@ -1493,7 +1514,7 @@ angular.module('laReta.controllers', [])
 
         // Needed variables
         $scope.event = $localStorage.get("new_event", { seleccionarCancha: false } ,true);
-
+        $scope.user = $localStorage.get('user',{}, true);
         var canchaId = $stateParams["canchaId"];
 
         var data = {"canchaId": canchaId, 'month': 0, 'year': 0};
@@ -1509,6 +1530,7 @@ angular.module('laReta.controllers', [])
                 $scope.cancha = result.data;
                 $scope.cancha.hora_inicio = new Date("1/1/1900 " + result.data.hora_inicio);
                 $scope.cancha.hora_fin = new Date("1/1/1900 " + result.data.hora_fin);
+                $scope.cancha.isAdmin = $scope.cancha.administrador.id == $scope.user.id
                 $scope.canchaData = $scope.cancha;
 
                 console.log($scope.canchaData);
@@ -1878,7 +1900,7 @@ angular.module('laReta.controllers', [])
     .controller('CalendarioCtrl', function($rootScope, $scope, $stateParams, apiHandler, $state, $ionicModal,
                                             dateUtility, $localStorage, PaypalService, $ionicPopup) {
 
-        $scope.event = $localStorage.get("new_event", { seleccionarCancha: false } ,true);
+        $scope.event = $localStorage.get("new_event", {id: 0, seleccionarCancha: false } ,true);
         $scope.cancha = $localStorage.get("cancha", { id: 0 } ,true);  
 
         var canchaId    = $stateParams["canchaId"];
@@ -1886,7 +1908,7 @@ angular.module('laReta.controllers', [])
         var month       = $stateParams["month"];
         var year        = $stateParams["year"];
         var day         = $stateParams["day"] || $scope.event.fecha.getDate(); 
-        var fecha =     { 'day': day, 'month': month , 'year': year};
+        var fecha =     { 'day': day, 'month': parseInt(month) + 1 , 'year': year};
 
         
         $scope.minDate = new Date(year, month, day, 0, 0, 0, 0);
@@ -1904,9 +1926,7 @@ angular.module('laReta.controllers', [])
         $scope.canchaId = canchaId;
 
         $scope.goToFecha = function(obj){
-            debugger;
             obj = obj || $scope.calendarioData.fecha;
-            alert(JSON.stringify(obj));
             obj.canchaId = canchaId;
             $rootScope.showLoader(true);
             var promise = apiHandler.listReservacionesForCancha(obj);
@@ -1918,7 +1938,6 @@ angular.module('laReta.controllers', [])
                     );
                 } else {
                     //$scope.reservaciones = result.data;
-
                     debugger;
                     var reservaciones = [];
                     var dataReservaciones = result.data;
@@ -1930,6 +1949,7 @@ angular.module('laReta.controllers', [])
                             className: 'calendario-horario-no-disponible', 
                             text: '', 
                             abierto: false,
+                            ocupado: false,
                             horario: ((cont>=10)?cont:'0'+cont) + ((cont>=12)?'pm':'am'),
                             hora: cont
                         })
@@ -1945,12 +1965,13 @@ angular.module('laReta.controllers', [])
                     var hi = 0; // hora que inicia
                     var ht = 0; // hora que termina
                     for(cont=0; cont<dataReservaciones.length; cont++){
-                        var fechaHi = new Date("2015-03-25T" + dataReservaciones[cont].hora_inicio + "Z");
-                        var fechaHt = new Date("2015-03-25T" + dataReservaciones[cont].hora_fin + "Z");
+                        var fechaHi = new Date(dataReservaciones[cont].fecha + " " + dataReservaciones[cont].hora_inicio);
+                        var fechaHt = new Date(dataReservaciones[cont].fecha + " " + dataReservaciones[cont].hora_fin);
                         hi = fechaHi.getHours()
                         ht = fechaHt.getHours()
                         reservaciones[hi].className='calendario-horario-ocupado';
-                        reservaciones[hi].text = 'Ocupado ' +  ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am'),
+                        reservaciones[hi].ocupado = true;
+                        reservaciones[hi].text = 'Ocupado ' +  ((hi>=10)?hi:'0'+hi) + ((hi>=12)?'pm':'am') + " - " + ((ht>=10)?ht:'0'+ht) + ((ht>=12)?'pm':'am'),
                         reservaciones[hi].data = dataReservaciones[cont];
                     }
 
@@ -2018,19 +2039,21 @@ angular.module('laReta.controllers', [])
         };
 
         // Accion para crear la cancha
-        $scope.doCrearReservacion = function () {
-
+        $scope.doCrearReservacion = function (is_pay) {
+            debugger;
             var calendarioData = $scope.calendarioData;
             var fecha = $scope.calendarioData.fecha;
             var horaInicio = $scope.calendarioData.hora_inicio;
             var horaFin = $scope.calendarioData.hora_fin;
+            is_pay = is_pay || false;
 
-            calendarioData.fecha = dateUtility.getStringFromDateTime(fecha);
-            calendarioData.hora_inicio = "2017-01-01 " + horaInicio + ":00:00";
-            calendarioData.hora_fin = "2017-01-01 " + horaFin + ":00:00";
+            calendarioData.fecha = new Date(dateUtility.getStringFromDateTime(fecha));
+            calendarioData.hora_inicio = new Date("2017-08-22 " + horaInicio + ":00:00");
+            calendarioData.hora_fin = new Date("2017-08-22 " + horaFin + ":00:00");
             calendarioData.usuarioId = user.id;
             calendarioData.canchaId = canchaId;
-            calendarioData.is_pay = false;
+            calendarioData.eventId = $scope.event.id;
+            calendarioData.is_pay = is_pay;
 
             var promise = apiHandler.newReservacion(calendarioData);
 
@@ -2043,16 +2066,23 @@ angular.module('laReta.controllers', [])
                     $rootScope.error('Ocurrió un error en la operación.');
                 } else {
                     $scope.closeCalendarioCanchaForm();
-                    if($scope.event.seleccionarCancha){
-                        $scope.event.calendario_cancha = response.data.id;
-                        $scope.event.seleccionarCancha = false;
-                        $localStorage.set("new_event", $scope.event, true);
-                        $state.go('app.event-new');
+                    if ($scope.event.seleccionarCancha) {
+                        $scope.finalizarSeleccionarCancha(response.data);
                     }
                 }
             });
 
         };
+
+        $scope.finalizarSeleccionarCancha = function(data){
+            $scope.event.reservacionId = data.id;
+            $scope.event.seleccionarCancha = false;
+            $localStorage.set("new_event", $scope.event, true);
+            alert(JSON.stringify($scope.event));
+            $rootScope.$broadcast('update_new_event');
+            $state.go('app.event-new');
+        };
+
 
         $scope.realizarPago = function(){
           if($scope.calendarioData.hora_inicio >= $scope.calendarioData.hora_fin){
@@ -2075,7 +2105,7 @@ angular.module('laReta.controllers', [])
                 alert(JSON.stringify(payment));
                 $scope.calendarioData.is_pay = true;
                 $localStorage.set("new_event", $scope.event, true);
-                $scope.doCrearReservacion();
+                $scope.doCrearReservacion(true);
               },function(err){
                 console.log("Error " +  err);
               });

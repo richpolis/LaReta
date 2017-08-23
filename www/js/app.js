@@ -1018,29 +1018,26 @@ angular.module('laReta', [
                         controller: 'CanchasCtrl'
                     }
                 },
-                params : {
-                    seleccionar : false
-                },
                 data: {
                     requireLogin: true
                 }
             })
-            .state('app.seleccionar-cancha', {
-                url: '/seleccionar/cancha',
+            /*.state('app.seleccionar-canchas', {
+                url: '/seleccionar/canchas',
                 cache: false,
                 views: {
-                    'menuContent': {
-                        templateUrl: 'templates/canchas.html',
-                        controller: 'CanchasCtrl'
+                    'menucontent': {
+                        templateurl: 'templates/canchas.html',
+                        controller: 'canchasctrl'
                     }
                 },
                 params : {
                     seleccionar : true
                 },
                 data: {
-                    requireLogin: true
+                    requirelogin: true
                 }
-            })
+            })*/
 
             .state('app.cancha', {
                 url: '/canchas/:canchaId',
@@ -1055,6 +1052,23 @@ angular.module('laReta', [
                     requireLogin: true
                 }
             })
+
+            /*.state('app.seleccionar-cancha', {
+                url: '/seleccionar/canchas/:canchaId',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/cancha.html',
+                        controller: 'CanchaCtrl'
+                    }
+                },
+                params : {
+                    seleccionar : true
+                },
+                data: {
+                    requireLogin: true
+                }
+            })*/
 
             .state('app.cancha-new', {
                 url: '/canchas/new',

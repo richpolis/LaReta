@@ -127,6 +127,11 @@ angular.module('laReta.services', [])
         this.listCancha = function (data) {
             return this.executeRequest('/canchas/list', data);
         };
+
+        //  Cancha List for Admin
+        this.listAdminCancha = function (data) {
+            return this.executeRequest('/canchas/list/admin', data);
+        };
         
         //  Cancha View
         this.viewCancha = function (data) {
@@ -176,6 +181,11 @@ angular.module('laReta.services', [])
         // Reservaciones Delete <CalendarioCancha>
         this.deleteReservacion = function (data) {
             return this.executeRequest('/calendario/canchas/delete', data);
+        };
+
+        // Reservaciones Pago <CalendarioCancha>
+        this.pagoReservacion = function (data) {
+            return this.executeRequest('/calendario/canchas/pago', data);
         };
 
     })
@@ -423,7 +433,6 @@ angular.module('laReta.services', [])
                 }
             },
             getStringFromDateTime: function(datetime){
-                debugger;
                 return datetime.getFullYear()
                 + '-' + ((datetime.getMonth() + 1) < 10 ? '0':'') + (datetime.getMonth() + 1)
                 + '-' + (datetime.getDate() < 10 ? '0':'') + datetime.getDate()

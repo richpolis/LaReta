@@ -28,8 +28,11 @@
                 </div>
             </div>
             <div class="actions">
-                <button class="button button-block button-primary-skew" type="submit"  ng-click="realizarPago()">Reservar</button>
-                <button class="button button-block button-primary-skew" type="button"  ng-click="closeCalendarioCanchaForm()">Cerrar</button>
+                <button class="button button-block button-primary-skew" type="button" ng-click="realizarPago()"
+                        ng-if="cancha.tipos_pago.paypal || cancha.tipos_pago.credito">Pago con paypal o TDC</button>
+                <button class="button button-block button-primary-skew" type="button" ng-click="doCrearReservacion()"
+                        ng-if="cancha.tipos_pago.efectivo">Pago en efectivo</button>
+                <button class="button button-block button-primary-skew" type="button" ng-click="closeCalendarioCanchaForm()">Cerrar</button>
             </div>
         </form>
         </ion-content>

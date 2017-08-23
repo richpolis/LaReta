@@ -14,10 +14,10 @@
                 <input type="date" ng-if="isIOS" placeholder="Fecha" ng-model="calendarioData.fecha"
                 ng-required="true"  ng-change="goToAfterFecha()">
             </label>
-            <ion-item ng-repeat="reservacion in reservaciones" 
+            <ion-item ng-repeat="reservacion in reservaciones" ng-class="reservacion.className"
             class="event-list-item" ng-show="reservacion.abierto" ng-click="seleccionarHorario(reservacion.hora, reservacion.data)">
                 <div class="row">
-                    <div class="col-75">
+                    <div class="col-90">
                         <div class="location" ng-if="reservacion">
                             {{ reservacion.text }}
                         </div>

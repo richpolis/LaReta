@@ -89,13 +89,13 @@
         </div>
 
         <div class="actions">
-            <button class="button button-block button-positive" type="button" ng-click="gotoEditCancha()">
+            <button class="button button-block button-positive" type="button" ng-click="gotoEditCancha()" ng-if="cancha.isAdmin">
                 <i class="fa fa-pencil fa-fw"></i> Editar
             </button>
             <button class="button button-block button-calm" type="button" ng-click="gotoReservaciones()">
                 <i class="fa fa-eye fa-fw"></i> Reservaciones
             </button>
-            <button class="button button-block button-assertive" type="button" ng-click="deleteCancha()">
+            <button class="button button-block button-assertive" type="button" ng-click="deleteCancha()" ng-if="cancha.isAdmin">
                 <i class="fa fa-trash fa-fw"></i> Eliminar
             </button>
         </div>

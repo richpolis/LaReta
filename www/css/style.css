@@ -2,14 +2,17 @@
 @font-face {
   font-family: Gotham;
   src: url("../fonts/gotham-medium.otf") format("opentype"); }
+
 @font-face {
   font-family: HelveticaLight;
   src: url("../fonts/Helvetica-Light.ttf") format("truetype");
   font-style: normal; }
+
 @font-face {
   font-family: HelveticaLightOblique;
   src: url("../fonts/Helvetica-LightOblique.ttf") format("truetype");
   font-style: italic, oblique; }
+
 /* DEFAULT IONIC OVERRIDES */
 /* COLORS */
 /* SKEW */
@@ -321,6 +324,7 @@ ion-side-menu .scroll-content {
 @media (min-width: 400px) {
   .sport-item {
     width: 33%; } }
+
 /* SCREEN: EVENTS */
 .datebox .label, .datebox .selector {
   width: 100%;
@@ -328,12 +332,14 @@ ion-side-menu .scroll-content {
   position: absolute;
   top: 0;
   left: 0; }
+
 .datebox .label {
   padding: 10px;
   font-size: 14px;
   line-height: 30px;
   color: #505050;
   overflow: hidden; }
+
 .datebox .selector {
   opacity: 0;
   padding: 0;
@@ -376,16 +382,20 @@ ion-side-menu .scroll-content {
 
 .profile-details table {
   width: 100%; }
+
 .profile-details tr {
   height: 30px !important; }
+
 .profile-details th {
   font-family: Gotham, sans-serif;
   font-size: 14px;
   text-align: left;
   padding-left: 10px;
   vertical-align: middle; }
+
 .profile-details tr:nth-child(odd) {
   background-color: #1e73eb; }
+
 .profile-details td {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
@@ -426,12 +436,12 @@ ion-side-menu .scroll-content {
       letter-spacing: 0.05em;
       font-style: normal;
       font-size: 10px; }
-  .event-list-item .calendario-horario-no-disponible, .event-participant .calendario-horario-no-disponible, .message-list-item .calendario-horario-no-disponible {
+  .event-list-item.calendario-horario-no-disponible, .calendario-horario-no-disponible.event-participant, .calendario-horario-no-disponible.message-list-item {
     background-color: gray; }
-  .event-list-item .calendario-horario-disponible, .event-participant .calendario-horario-disponible, .message-list-item .calendario-horario-disponible {
-    background-color: white; }
-  .event-list-item .calendario-horario-ocupado, .event-participant .calendario-horario-ocupado, .message-list-item .calendario-horario-ocupado {
-    background-color: greenyellow; }
+  .event-list-item.calendario-horario-ocupado, .calendario-horario-ocupado.event-participant, .calendario-horario-ocupado.message-list-item {
+    background-color: orange;
+    color: black !important;
+    font-weight: bold; }
 
 /* SCREEN: EVENT */
 .event-name {
@@ -538,6 +548,7 @@ ion-side-menu .scroll-content {
   float: left;
   margin-right: 10px;
   margin-bottom: 5px; }
+
 .event-participant .owner {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
@@ -545,6 +556,7 @@ ion-side-menu .scroll-content {
   font-size: 11px;
   line-height: 10px;
   display: block; }
+
 .event-participant .details, .event-participant .details * {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
@@ -557,17 +569,21 @@ ion-side-menu .scroll-content {
 .message-list-item .author {
   display: inline-block;
   font-weight: bold; }
+
 .message-list-item .author-self {
   color: #eb5c25 !important; }
+
 .message-list-item .message {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
   font-style: normal;
   font-size: 12px; }
+
 .message-list-item .delete {
   display: block;
   float: right;
   color: #bbbfc0; }
+
 .message-list-item .timestamp {
   width: 100%;
   text-align: right;
@@ -649,20 +665,25 @@ ion-side-menu .scroll-content {
     z-index: -1; }
   #login .pills .option {
     border-top: 4px solid transparent; }
+
 #login .list {
   padding: 0 !important; }
+
 #login .item {
   border: none !important;
   background-color: #f0f0f0 !important;
   margin: 0 !important; }
+
 #login .login-button {
   margin: 0 !important; }
+
 #login .input-label {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
   font-style: normal;
   font-size: 15px;
   color: #1b214d; }
+
 #login input {
   font-family: HelveticaLight, Arial, sans-serif;
   letter-spacing: 0.05em;
@@ -727,5 +748,3 @@ div.pac-container {
   pointer-events: auto;
   position: absolute;
   z-index: 10000; }
-
-/*# sourceMappingURL=style.css.map */

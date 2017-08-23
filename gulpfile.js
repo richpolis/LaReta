@@ -11,7 +11,7 @@ var paths = {
   sass: ['./scss/**/*.scss']
 };
 
-gulp.task('default', ['sass']);
+gulp.task('default', ['sass','styles']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -26,8 +26,21 @@ gulp.task('sass', function(done) {
     .on('end', done);
 });
 
+gulp.task('styles', function(done) {
+    gulp.src('./scss/style.scss')
+        .pipe(sass())
+        .on('error', sass.logError)
+        .pipe(gulp.dest('./www/css/'))
+        .pipe(minifyCss({
+            keepSpecialComments: 0
+        }))
+        .pipe(rename({ extname: '.min.css' }))
+        .pipe(gulp.dest('./www/css/'))
+        .on('end', done);
+});
+
 gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.sass, ['sass','styles']);
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -37,7 +50,8 @@ gulp.task('install', ['git-check'], function() {
     });
 });
 
-gulp.task('serve:before', ['watch']);
+gulp.task('serve:before', ['default','watch']);
+gulp.task('run:before', ['default']);
 
 gulp.task('git-check', function(done) {
   if (!sh.which('git')) {
