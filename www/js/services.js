@@ -396,24 +396,32 @@ angular.module('laReta.services', [])
                 }
                 return '??';
             },
-            getDateFromString: function(date){
+            getDateFromString: function(date, separador){
+                separador = separador || "-";
                 if($rootScope.isIOS){
                     return date;
                 }else{
-                    var datos = date.split("-");
+                    var datos = date.split(separador);
                     var fecha = new Date(datos[0],datos[1],datos[2]);
                     return fecha; 
                 }
             },
-            getStringFromDate: function(date){
+            getStringFromDate: function(date, separador, mysql){
+                separador = separador || "\/";
+                mysql = mysql || false;
                 if($rootScope.isIOS){
                     return date;
                 }else{
                     var ano = parseInt(date.getFullYear(),10);
                     var mes = parseInt(date.getMonth(),10) + 1;
                     var dia = parseInt(date.getDate(),10);
-                    var string = (dia>=10?dia:"0" + dia) + "\/" + (mes>=10?mes:"0" + mes) + "\/" + ano;
-                    return string; 
+                    var string = "";
+                    if(mysql){
+                        string = ano + separador + (mes>=10?mes:"0" + mes)  + separador + (dia>=10?dia:"0" + dia);
+                    }else{
+                        string = (dia>=10?dia:"0" + dia) + separador + (mes>=10?mes:"0" + mes) + separador + ano;
+                    }
+                    return string;
                 }
             },
             getStringFromTime: function(time){

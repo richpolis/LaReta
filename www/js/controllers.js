@@ -884,7 +884,8 @@ angular.module('laReta.controllers', [])
         $scope.event.skill = $scope.event.skill || 0;
         $scope.event.gender = $scope.event.gender || 0;
 
-        $scope.event.seleccionarCancha = $scope.event.seleccionarCancha || true ;
+        // si ya tiene la reservacion, ya no tiene que seleccionar cancha
+        $scope.event.seleccionarCancha = ( $scope.event.reservacionId ? $scope.event.seleccionarCancha: true );
 
         //$scope.version = $cordovaDevice.getVersion();
 
@@ -907,20 +908,6 @@ angular.module('laReta.controllers', [])
         }
         hoyMasUnaHora.setSeconds(0);
         hoyMasUnaHora.setMilliseconds(0);
-
-        // si seleccionarCancha esta activa, es decir que inicia el proceso de lo contrario esta terminara el proceso
-        if($scope.event.seleccionarCancha){    
-            $scope.event.date = new Date();
-            console.log($scope.event.date);
-            // mascara de date
-            $scope.event.dateString =  dateUtility.getStringFromDate($scope.event.date);
-            $scope.minDate = yesterday.toISOString().slice(0,10);
-            $scope.event.time = hoyMasUnaHora;
-            // mascara de time
-            $scope.event.timeString =  dateUtility.getStringFromTime($scope.event.time);
-        }else{
-            $scope.createEventFinally();
-        }
 
         // Preset for Gender
         $scope.genderOptions = $rootScope.eventGenders;
@@ -1144,11 +1131,20 @@ angular.module('laReta.controllers', [])
             });
         }
 
-        $scope.$on('update_new_event', function(event, args) {
-            // do what you want to do
-            $scope.event = $localStorage.get("new_event", {} ,true);
-        });
-        
+        // si seleccionarCancha esta activa, es decir que inicia el proceso de lo contrario esta terminara el proceso
+        if($scope.event.seleccionarCancha){
+            $scope.event.date = new Date();
+            console.log($scope.event.date);
+            // mascara de date
+            $scope.event.dateString =  dateUtility.getStringFromDate($scope.event.date);
+            $scope.minDate = yesterday.toISOString().slice(0,10);
+            $scope.event.time = hoyMasUnaHora;
+            // mascara de time
+            $scope.event.timeString =  dateUtility.getStringFromTime($scope.event.time);
+        }else{
+            $scope.createEventFinally();
+        }
+
 
     })
 
@@ -1896,13 +1892,13 @@ angular.module('laReta.controllers', [])
         };
     })
     .controller('CalendarioCtrl', function($rootScope, $scope, $stateParams, apiHandler, $state, $ionicModal,
-                                            dateUtility, $localStorage, PaypalService, $ionicPopup) {
+                                            dateUtility, $localStorage, PaypalService, $ionicPopup, $ionicHistory) {
 
         $scope.event = $localStorage.get("new_event", {id: 0, seleccionarCancha: false } ,true);
         $scope.cancha = $localStorage.get("cancha", { id: 0 } ,true);  
 
         var canchaId    = $stateParams["canchaId"];
-        var user        = $localStorage.get('user',{}, true);
+        $scope.user     = $localStorage.get('user',{}, true);
         var month       = $stateParams["month"];
         var year        = $stateParams["year"];
         var day         = $stateParams["day"] || $scope.event.fecha.getDate(); 
@@ -2038,18 +2034,20 @@ angular.module('laReta.controllers', [])
 
         // Accion para crear la cancha
         $scope.doCrearReservacion = function (is_pay) {
-            var calendarioData = $scope.calendarioData;
+            debugger;
+            var calendarioData = {};
             var fecha = $scope.calendarioData.fecha;
+            var fecha_string = dateUtility.getStringFromDate(fecha, "-" , true); // fecha tipo mysql
             var horaInicio = $scope.calendarioData.hora_inicio;
             var horaFin = $scope.calendarioData.hora_fin;
             is_pay = is_pay || false;
 
-            calendarioData.fecha = new Date(dateUtility.getStringFromDateTime(fecha));
-            calendarioData.hora_inicio = new Date("2017-08-22 " + horaInicio + ":00:00");
-            calendarioData.hora_fin = new Date("2017-08-22 " + horaFin + ":00:00");
-            calendarioData.usuarioId = user.id;
+            calendarioData.fecha = dateUtility.getStringFromDateTime(fecha);
+            calendarioData.hora_inicio = fecha_string + " " + (horaInicio>=10?horaInicio:"0" + horaInicio) + ":00:00";
+            calendarioData.hora_fin = fecha_string + " "  + (horaFin>=10?horaFin:"0" + horaFin) + ":00:00";
+            calendarioData.usuarioId = $scope.user.id;
             calendarioData.canchaId = canchaId;
-            calendarioData.eventId = $scope.event.id;
+            calendarioData.eventId = null;
             calendarioData.is_pay = is_pay;
 
             var promise = apiHandler.newReservacion(calendarioData);
@@ -2063,21 +2061,53 @@ angular.module('laReta.controllers', [])
                     $rootScope.error('Ocurrió un error en la operación.');
                 } else {
                     $scope.closeCalendarioCanchaForm();
-                    if ($scope.event.seleccionarCancha) {
-                        $scope.finalizarSeleccionarCancha(response.data);
+                    var reservacionId = response.data.id;
+                    if(is_pay){
+                        var payment_paypal = $localStorage.get("payment_paypal", {id: 0, state: "" } ,true);
+                        var horas = $scope.calendarioData.hora_fin - $scope.calendarioData.hora_inicio;
+                        var dataPago = {
+                            pago_id: payment_paypal.id,
+                            monto_pagado: $scope.cancha.precio * horas,
+                            fecha_pago: new Date(payment_paypal.create_time),
+                            usuarioId: $scope.user.id,
+                            reservacionId: reservacionId
+                        };
+                        var promise = apiHandler.pagoReservacion(dataPago);
+
+                        promise.then(function (response) {
+                            console.log("Response:");
+                            console.log(response);
+
+                            if (response.error != 0) {
+                                // TODO: throw popup
+                                $rootScope.error('Ocurrió un error en la operación.');
+                            } else {
+                                $scope.finalizarSeleccionarCancha(reservacionId);
+                            }
+                        });
+                    }else{
+                        $scope.finalizarSeleccionarCancha(reservacionId)
                     }
+
                 }
             });
 
         };
 
-        $scope.finalizarSeleccionarCancha = function(data){
-            $scope.event.reservacionId = data.id;
-            $scope.event.seleccionarCancha = false;
-            $localStorage.set("new_event", $scope.event, true);
-            alert(JSON.stringify($scope.event));
-            $rootScope.$broadcast('update_new_event');
-            $state.go('app.event-new');
+        $scope.finalizarSeleccionarCancha = function(reservacionId){
+            $scope.closeCalendarioCanchaForm();
+            $scope.event.reservacionId = reservacionId;
+            //alert(JSON.stringify($scope.event));
+            if ($scope.event.seleccionarCancha) {
+                $scope.event.seleccionarCancha = false;
+                $scope.event.location = $scope.cancha.name;
+                $scope.event.latitude = $scope.cancha.latitude;
+                $scope.event.longitude = $scope.cancha.longitude;
+                $localStorage.set("new_event", $scope.event, true);
+                $ionicHistory.clearCache().then(function(){
+                    $state.go('app.event-new', {defaultSport: $scope.event.sport});
+                });
+            }
         };
 
 
@@ -2094,37 +2124,38 @@ angular.module('laReta.controllers', [])
             });
           }else{
               var horas = $scope.calendarioData.hora_fin - $scope.calendarioData.hora_inicio;
-          }  
+          }
 
-          PaypalService.initPaymentUI().then(function () {
-              PaypalService.makePayment($scope.cancha.precio * horas , "Total").then(function(payment){
-                $scope.event.payment = payment;
-                //alert(JSON.stringify(payment));
-                /*
-                Respuesta del pago
-                {
-                    "client": {
-                        "enviroment": "sanbox",
-                        "paypal_sdk_version": "2.1.5.3",
-                        "platform": "Android",
-                        "product_name": "PayPal-Android-SDK",
-                    },
-                    "response": {
-                        "create_time": "2017-08-22T13:48:53Z",
-                        "id": "PAY-4126963939902521KLGODMMA",
-                        "intent": "sale",
-                        "state": "approved"
-                    },
-                    "response_type": "payment"
-                }
-                * */
-                $scope.calendarioData.is_pay = true;
-                $localStorage.set("new_event", $scope.event, true);
-                $scope.doCrearReservacion(true);
-              },function(err){
-                console.log("Error " +  err);
-              });
-          });
+            PaypalService.initPaymentUI().then(function () {
+                PaypalService.makePayment($scope.cancha.precio * horas, "Total").then(function (payment) {
+                    $scope.event.payment = payment;
+                    //alert(JSON.stringify(payment));
+                    /*
+                    Respuesta del pago
+                    {
+                        "client": {
+                            "enviroment": "sanbox",
+                            "paypal_sdk_version": "2.1.5.3",
+                            "platform": "Android",
+                            "product_name": "PayPal-Android-SDK",
+                        },
+                        "response": {
+                            "create_time": "2017-08-22T13:48:53Z",
+                            "id": "PAY-4126963939902521KLGODMMA",
+                            "intent": "sale",
+                            "state": "approved"
+                        },
+                        "response_type": "payment"
+                    }
+                    * */
+                    $localStorage.set("payment_paypal", payment.response, true);
+                    $localStorage.set("new_event", $scope.event, true);
+                    $scope.doCrearReservacion(payment.response.state == "approved");
+                }, function (err) {
+                    console.log("Error " + err);
+                });
+            });
+
         }
 
         $scope.showDatePicker = function(){

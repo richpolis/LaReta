@@ -27,13 +27,18 @@
                     </label>
                 </div>
             </div>
-            <div class="actions">
+            <div class="actions" ng-if="user.id != cancha.administrador.id">
                 <button class="button button-block button-primary-skew" type="button" ng-click="realizarPago()"
                         ng-if="cancha.tipos_pago.paypal || cancha.tipos_pago.credito">Pago con paypal o TDC</button>
                 <button class="button button-block button-primary-skew" type="button" ng-click="doCrearReservacion()"
                         ng-if="cancha.tipos_pago.efectivo">Pago en efectivo</button>
                 <button class="button button-block button-primary-skew" type="button" ng-click="closeCalendarioCanchaForm()">Cerrar</button>
             </div>
+                <div class="actions" ng-if="user.id == cancha.administrador.id">
+                    <button class="button button-block button-primary-skew" type="button" ng-click="doCrearReservacion()"
+                            ng-if="cancha.tipos_pago.efectivo">Reservar por administrador</button>
+                    <button class="button button-block button-primary-skew" type="button" ng-click="closeCalendarioCanchaForm()">Cerrar</button>
+                </div>
         </form>
         </ion-content>
     </ion-modal-view>
