@@ -37,6 +37,10 @@
                     <th>Bio</th>
                     <td>{{ user.bio }}</td>
                 </tr>
+                <tr ng-if="user.role!=ROLE_USER">
+                    <th>Permiso</th>
+                    <td>{{ user.tipo_usuario }}</td>
+                </tr>
                 </tbody>
             </table>
         </div>

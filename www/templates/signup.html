@@ -64,11 +64,19 @@
                         <span class="input-label">Bio</span>
                         <textarea rows="3" ng-model="user.bio" placeholder="Cuéntanos sobre ti, tu equipo preferido, etc.."></textarea>
                     </label>
+                    <label class="item item-toggle">
+                        Dueño de canchas
+                        <label class="toggle toggle-assertive">
+                            <input type="checkbox" ng-model="user.has_canchas">
+                            <div class="track">
+                                <div class="handle"></div>
+                            </div>
+                        </label>
+                    </label>
                 </div>
             </div>
 
             <div class="padding center">
-
                 <p class="muted">
                 <label><input type="checkbox" style="font-size: 36px; margin-left: 10px;" ng-model="user.terms" ng-required="true"> He leído y acepto el</label>&nbsp;<a href="" ng-click="openPrivacyModal()">Aviso de Privacidad</a></p>
             </div>

@@ -48,6 +48,11 @@ angular.module('laReta.services', [])
             return this.executeRequest('/user/view' + suffix);
         };
 
+        // Event List
+        this.listUsersHasCanchas = function (data) {
+            return this.executeRequest('/user/list/admin', data);
+        };
+
         // User Edit
         this.editUser = function (data) {
             return this.executeRequest('/user/edit', data);
@@ -61,6 +66,11 @@ angular.module('laReta.services', [])
         // User Edit
         this.updateGeolocation = function (data) {
             return this.executeRequest('/user/geolocation/update', data);
+        };
+
+        // User Permisos
+        this.updateRole = function (data) {
+            return this.executeRequest('/user/role/update', data);
         };
 
         // Event List

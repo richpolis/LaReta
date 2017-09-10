@@ -647,8 +647,7 @@ angular.module('laReta', [
                                         notify: true
                                    });
                                 }
-                        }
-                        if(action == "join"){
+                        }else if(action == "join"){
                             sPath = "/app/event/participants/" + eventId;
                             if(path != sPath){
                                 $state.go('app.event-participants', { 'eventId': eventId });
@@ -660,8 +659,7 @@ angular.module('laReta', [
                                         notify: true
                                    });
                             }
-                        }
-                        if(action == "message"){
+                        }else if(action == "message"){
                             sPath = "/app/event/message/" + eventId;
                             console.log("Path: " + path);
                             console.log("sPath: " + sPath);
@@ -673,6 +671,32 @@ angular.module('laReta', [
                                         inherit: false,
                                         notify: true
                                    });
+                            }
+                        }else if(action == "userHasCanchas"){
+                            sPath = "/app/usuarios/admin/canchas";
+                            console.log("Path: " + path);
+                            console.log("sPath: " + sPath);
+                            if(path != sPath){
+                                $state.go('app.usuarios-admin-canchas', { 'usuarioId': eventId });
+                            }else{
+                                $state.transitionTo($state.current, { 'usuarioId': eventId }, {
+                                    reload: true,
+                                    inherit: false,
+                                    notify: true
+                                });
+                            }
+                        }else if($action == "userPerfil"){
+                            sPath = "/app/profile";
+                            console.log("Path: " + path);
+                            console.log("sPath: " + sPath);
+                            if(path != sPath){
+                                $state.go('app.profile-self');
+                            }else{
+                                $state.transitionTo($state.current, { }, {
+                                    reload: true,
+                                    inherit: false,
+                                    notify: true
+                                });
                             }
                         }
 
@@ -779,6 +803,7 @@ angular.module('laReta', [
             .state('app', {
                 url: '/app',
                 abstract: true,
+                cache: false,
                 templateUrl: 'templates/menu.html',
                 controller: 'AppCtrl',
                 data: {
@@ -1022,23 +1047,6 @@ angular.module('laReta', [
                     requireLogin: true
                 }
             })
-            /*.state('app.seleccionar-canchas', {
-                url: '/seleccionar/canchas',
-                cache: false,
-                views: {
-                    'menucontent': {
-                        templateurl: 'templates/canchas.html',
-                        controller: 'canchasctrl'
-                    }
-                },
-                params : {
-                    seleccionar : true
-                },
-                data: {
-                    requirelogin: true
-                }
-            })*/
-
             .state('app.cancha', {
                 url: '/canchas/:canchaId',
                 cache: false,
@@ -1052,23 +1060,6 @@ angular.module('laReta', [
                     requireLogin: true
                 }
             })
-
-            /*.state('app.seleccionar-cancha', {
-                url: '/seleccionar/canchas/:canchaId',
-                cache: false,
-                views: {
-                    'menuContent': {
-                        templateUrl: 'templates/cancha.html',
-                        controller: 'CanchaCtrl'
-                    }
-                },
-                params : {
-                    seleccionar : true
-                },
-                data: {
-                    requireLogin: true
-                }
-            })*/
 
             .state('app.cancha-new', {
                 url: '/canchas/new',
@@ -1122,6 +1113,20 @@ angular.module('laReta', [
                     'menuContent': {
                         templateUrl: 'templates/reservaciones.html',
                         controller: 'ReservacionesCtrl'
+                    }
+                },
+                data: {
+                    requireLogin: true
+                }
+            })
+
+            .state('app.usuarios-admin-canchas', {
+                url: '/usuarios/admin/canchas',
+                cache: false,
+                views: {
+                    'menuContent': {
+                        templateUrl: 'templates/usuariosAdminCanchas.html',
+                        controller: 'UsuariosAdminCanchasCtrl'
                     }
                 },
                 data: {

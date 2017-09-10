@@ -5,21 +5,20 @@
                 <div class="row">
                     <div class="col-75">
                         <div class="location">
-                            {{reservacion.usuario.fullName}}
+                            {{ reservacion.cancha.name }} | {{ reservacion.usuario.fullName }}
                         </div>
                         <div class="details">
-                            <span ng-if="reservacion.fecha != null"> | <i class="fa fa-map-marker"></i> {{ reservacion.fecha }}</span>
+                            <span ng-if="reservacion.fecha != null"> <i class="fa fa-calendar"></i> {{ reservacion.fecha }}</span>
+                            <br>
+                            <span ng-if="reservacion.hora_inicio != null"> <i class="fa fa-clock-o"></i> {{ reservacion.hora_inicio | date : 'h:mm a' }} - {{ reservacion.hora_fin | date : 'h:mm a' }}</span>
                         </div>
                     </div>
-                    <div class="time col vcenter">
-                        {{ reservacion.hora_inicio }} - {{ reservacion.hora_fin }}
-                    </div>
+                    <div class="col">&nbsp;</div>
                     <div class="chevron">
                         <i class="fa fa-chevron-right"></i>
                     </div>
                 </div>
             </ion-item>
-
         </ion-list>
     </ion-content>
 </ion-view>

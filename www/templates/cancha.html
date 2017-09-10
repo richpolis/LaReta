@@ -22,7 +22,7 @@
         </div>
 
         <div class="event-details">
-            <table style="width: 100%;">
+            <table style="width: 100%;" ng-if="cancha.is_public">
                 <tbody>
                 <tr>
                     <th>Abierto</th>
@@ -67,7 +67,7 @@
                     <th>Publica</th>
                     <td>
                         <i class="fa fa-check fa-fw" ng-if="cancha.is_public"></i>
-                        <span ng-if="!cancha.is_public">De Pago</span>
+                        <span ng-if="cancha.is_public">De Pago</span>
                     </td>
                 </tr>
                 <tr>
@@ -92,7 +92,7 @@
             <button class="button button-block button-positive" type="button" ng-click="gotoEditCancha()" ng-if="cancha.isAdmin">
                 <i class="fa fa-pencil fa-fw"></i> Editar
             </button>
-            <button class="button button-block button-calm" type="button" ng-click="gotoReservaciones()">
+            <button class="button button-block button-calm" type="button" ng-click="gotoReservaciones()" ng-if="cancha.is_public">
                 <i class="fa fa-eye fa-fw"></i> Reservaciones
             </button>
             <button class="button button-block button-assertive" type="button" ng-click="deleteCancha()" ng-if="cancha.isAdmin">

@@ -44,7 +44,11 @@
                 </ion-item>
                 <ion-item menu-close href="#/app/canchas">
                     <div class="item-icon"><i class="fa fa-object-group fa-2x fa-fw"></i></div>
-                    <span class="item-label">Canchas</span>
+                    <span class="item-label">Canchas o Lugares</span>
+                </ion-item>
+                <ion-item ng-if="user.role=='ROLE_ADMIN'" menu-close href="#/app/usuarios/admin/canchas">
+                    <div class="item-icon"><i class="fa fa-lock fa-2x fa-fw"></i></div>
+                    <span class="item-label">Solicitudes</span>
                 </ion-item>
                 <ion-item menu-close href="#/app/logout">
                     <div class="item-icon"><i class="fa fa-sign-out fa-2x fa-fw"></i></div>

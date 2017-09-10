@@ -1,0 +1,93 @@
+<ion-view view-title="Solicitudes de usuarios">
+    <ion-content>
+        <div class="sport-separator">
+            Usuarios con solicitud de Canchas
+        </div>
+
+        <div ng-if="usuarios.length == 0" class="user-no-events">
+        <p>No hay solicitudes de usuarios recientes.</p>
+        </div>
+
+        <div class="event-list">
+
+            <div class="event-list-item event-list-item-attending" ng-repeat="usuario in usuarios">
+                <div class="row" ng-click="showPerfil(usuario)">
+                    <div class="col">
+                        <img class="profile-image" src="img/blank-avatar-big.png" ng-if="usuario.image == null && usuario.login_fb == false" style="width: 100%;" />
+                        <img class="profile-image" src="{{ usuario.image }}" ng-if="usuario.image != null" style="width: 100%;" />
+                    </div>
+                    <div class="col-75">
+                        <span class="location">
+                            <h2>{{ usuario.fullName }} </h2> <br>
+                            {{ usuario.email }} | {{ usuario.tipo_usuario }}
+                        </span>
+                        <br>
+                        <span class="details">
+                            <span ng-if="usuario.age != null"> {{ usuario.age }} años | {{ cancha.city }} </span>
+                        </span>
+                    </div>
+                    <div class="chevron">
+                        <i class="fa fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </ion-content>
+</ion-view>
+
+<script id="usuario-admin-canchas.html" type="text/ng-template">
+    <ion-modal-view>
+        <ion-content>
+            <div class="profile-header">
+
+                <img class="profile-image" src="img/blank-avatar-big.png" ng-if="usuario.image == null && usuario.login_fb == false" />
+                <img class="profile-image" src="{{ usuario.image }}" ng-if="usuario.image != null" />
+
+                <div class="profile-name">
+                    <strong>{{ usuario.fullName }}</strong>
+                    <br>
+                    <small>{{ usuario.email }} | {{ usuario.tipo_usuario }}</small>
+                </div>
+            </div>
+
+            <div class="profile-details">
+                <table>
+                    <tbody>
+                    <tr ng-if="usuario.birthDate !== undefined">
+                        <th>Edad</th>
+                        <td>{{ usuario.age }} años ({{ usuario.birthDate }})</td>
+                    </tr>
+                    <tr>
+                        <th>Género</th>
+                        <td>{{ usuario.genderName }}</td>
+                    </tr>
+                    <tr>
+                        <th>Deporte Favorito</th>
+                        <td>{{ usuario.sportName }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ciudad</th>
+                        <td>{{ usuario.city }}</td>
+                    </tr>
+                    <tr>
+                        <th>Bio</th>
+                        <td>{{ usuario.bio }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <div class="actions">
+                <button class="button button-block button-positive" type="button" ng-click="permiso('ROLE_ADMIN_CANCHAS')">Administrador Canchas</button>
+                <button class="button button-block button-positive" type="button" ng-click="permiso('ROLE_USER')">Solo Usuario</button>
+                <button class="button button-block button-primary-skew" type="button" ng-click="closePerfil()">Cerrar</button>
+            </div>
+            <br/>
+            <div class="actions">
+                <button class="button button-block button-assertive" type="button" ng-click="permiso('ROLE_ADMIN')">Administrador General</button>
+            </div>
+        </ion-content>
+    </ion-modal-view>
+</script>

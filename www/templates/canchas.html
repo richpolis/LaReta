@@ -12,17 +12,18 @@
 
             <div class="event-list-item event-list-item-attending" ng-repeat="cancha in miscanchas">
                 <div class="row" ng-click="gotoCancha(cancha.id)">
+                    <div class="col">
+                        <img src="{{cancha.image}}"  width="100%"/>
+                    </div>
                     <div class="col-75">
                         <span class="location">
-                            {{ cancha.name }}
+                            <h2>{{ cancha.name }} </h2> <br>
+                            {{ cancha.description }}
                         </span>
                         <br>
                         <span class="details">
                             <span ng-if="cancha.distance != null"> | <i class="fa fa-map-marker"></i> {{ cancha.distance }} km</span>
                         </span>
-                    </div>
-                    <div class="time col vcenter">
-                        
                     </div>
                     <div class="chevron">
                         <i class="fa fa-chevron-right"></i>
@@ -69,7 +70,7 @@
         <div class="event-footer-spacer" ng-if="canchas.length > 0"></div>
 
         <div class="padding center">
-            <button class="button button-block button-primary-skew"  ng-if="!event.seleccionarCancha" ng-click="gotoMisReservaciones()">Ver reservaciones</button>
+            <button class="button button-block button-primary-skew"  ng-if="!event.seleccionarCancha" ng-click="gotoMisReservaciones()">Ver mis reservaciones</button>
             <button class="button button-block button-primary-skew" ng-click="gotoNewCancha()">Registra tu cancha</button>
         </div>
        

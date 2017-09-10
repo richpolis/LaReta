@@ -1,6 +1,6 @@
 {
     "name": "laretaapp",
-    "version": "1.2.7",
+    "version": "1.5.0",
     "description": "La Reta",
     "dependencies": {
         "card.io.cordova.mobilesdk": "^2.1.0",
